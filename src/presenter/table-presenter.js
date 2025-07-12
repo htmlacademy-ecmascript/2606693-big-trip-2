@@ -7,17 +7,33 @@ import PointView from '../view/point-view.js';
 class TablePresenter {
   pointsListComponent = new PointsListView();
 
-  constructor({container}) {
+  constructor({container, pointsModel}) {
     this.container = container;
+    this.pointsModel = pointsModel;
   }
 
   init() {
+    this.points = [...this.pointsModel.getPoints()];
+    this.destinations = [...this.pointsModel.getDestinations()];
+    this.offers = [...this.pointsModel.getOffers()];
+
     render(new ListSortView(), this.container);
     render(this.pointsListComponent, this.container);
-    render(new PointEditView(), this.pointsListComponent.getElement());
 
-    for (let i = 0; i < 3; i++) {
-      render(new PointView(), this.pointsListComponent.getElement());
+    const pointEditProperties = {
+      point: this.points[0],
+      destinations: this.destinations,
+      offers: this.offers
+    };
+    render(new PointEditView(pointEditProperties), this.pointsListComponent.getElement());
+
+    for (let i = 1; i < this.points.length; i++) {
+      const properties = {
+        point: this.points[i],
+        destinations: this.destinations,
+        offers: this.offers
+      };
+      render(new PointView(properties), this.pointsListComponent.getElement());
     }
 
   }
