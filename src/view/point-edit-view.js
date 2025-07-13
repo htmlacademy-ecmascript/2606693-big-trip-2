@@ -18,9 +18,9 @@ function createDestinationsTemplate (destinations) {
   )).join('');
 }
 
-function creteOffersTemplate (offers, ids) {
-  return offers.map(({id, title, price}) => {
-    const isChecked = ids.includes(id);
+function creteOffersTemplate (availableOffers, selectedOfferIds) {
+  return availableOffers.map(({id, title, price}) => {
+    const isChecked = selectedOfferIds.includes(id);
     return (
       `<div class="event__offer-selector">
         <input class="event__offer-checkbox  visually-hidden" id="event-offer-${id}" type="checkbox" name="event-offer-${id}" ${isChecked ? 'checked' : ''}>
@@ -33,8 +33,8 @@ function creteOffersTemplate (offers, ids) {
     );
   }).join('');
 }
-function createTemplate({point, availableDestinations, destination, availableTypes, availableOffers, selectedOfferIds}) {
-  const {base_price: basePrice, date_from: dateFrom, date_to: dateTo, type, id} = point;
+function createTemplate({point, availableDestinations, destination, availableTypes, availableOffers}) {
+  const {base_price: basePrice, date_from: dateFrom, date_to: dateTo, offers, type, id} = point;
   const {name: destinationName, description: destinationDescription} = destination;
 
   const humanDateTimeFrom = humanizeDateTime(dateFrom);
@@ -42,7 +42,7 @@ function createTemplate({point, availableDestinations, destination, availableTyp
 
   const eventTypeTemplate = createEventTypeTemplate(availableTypes);
   const destinationsTemplate = createDestinationsTemplate(availableDestinations);
-  const offersTemplate = creteOffersTemplate(availableOffers, selectedOfferIds);
+  const offersTemplate = creteOffersTemplate(availableOffers, offers);
 
   return (
     `<form class="event event--edit" action="#" method="post">
@@ -96,7 +96,6 @@ function createTemplate({point, availableDestinations, destination, availableTyp
       <section class="event__details">
         <section class="event__section  event__section--offers">
           <h3 class="event__section-title  event__section-title--offers">Offers</h3>
-
           <div class="event__available-offers">
             ${offersTemplate}
           </div>
@@ -117,12 +116,11 @@ function createTemplate({point, availableDestinations, destination, availableTyp
 
 class PointEditView {
   constructor({point, destinations, offers}) {
-    this.point = point;
-    this.availableDestinations = destinations;
-    this.destination = this.availableDestinations.find((destination) => destination.id === point.destination);
-    this.availableTypes = offers.map((offersType) => offersType.type);
-    this.availableOffers = offers.find((offersType) => offersType.type === point.type).offers;
-    this.selectedOfferIds = this.availableOffers.map((offer) => offer.id).filter((id) => this.point.offers.includes(id));
+    this.point = point || {};
+    this.availableDestinations = destinations || [];
+    this.destination = this.availableDestinations.find((destination) => destination.id === point.destination) || {};
+    this.availableTypes = offers.map((offersType) => offersType.type) || [];
+    this.availableOffers = offers.find((offersType) => offersType.type === point.type)?.offers || [];
   }
 
   getTemplate() {
@@ -132,7 +130,6 @@ class PointEditView {
       destination: this.destination,
       availableTypes: this.availableTypes,
       availableOffers: this.availableOffers,
-      selectedOfferIds: this.selectedOfferIds
     };
     return createTemplate(properties);
   }

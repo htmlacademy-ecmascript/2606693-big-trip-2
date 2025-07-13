@@ -76,10 +76,10 @@ function createTemplate({point, destination, selectedOffers}) {
 
 class PointView {
   constructor({point, destinations, offers}) {
-    this.point = point;
-    this.destination = destinations.find((destination) => destination.id === point.destination);
-    this.availableOffers = offers.find((offersType) => offersType.type === point.type).offers;
-    this.selectedOffers = this.availableOffers.filter((offer) => this.availableOffers.includes(offer.id));
+    this.point = point || {};
+    this.destination = destinations.find((destination) => destination.id === point.destination) || {};
+    this.availableOffers = offers.find((offersType) => offersType.type === point.type)?.offers || [];
+    this.selectedOffers = this.availableOffers.filter((offer) => this.availableOffers.includes(offer.id)) || [];
   }
 
   getTemplate() {
