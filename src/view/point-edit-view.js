@@ -18,8 +18,12 @@ function createDestinationsTemplate (destinations) {
   )).join('');
 }
 
-function creteOffersTemplate (availableOffers, selectedOfferIds) {
-  return availableOffers.map(({id, title, price}) => {
+function createOffersTemplate (availableOffers, selectedOfferIds) {
+  if (availableOffers.length === 0) {
+    return '';
+  }
+
+  const offersListTemplate = availableOffers.map(({id, title, price}) => {
     const isChecked = selectedOfferIds.includes(id);
     return (
       `<div class="event__offer-selector">
@@ -32,17 +36,54 @@ function creteOffersTemplate (availableOffers, selectedOfferIds) {
       </div>`
     );
   }).join('');
+
+  return (
+    `<section class="event__section  event__section--offers">
+      <h3 class="event__section-title  event__section-title--offers">Offers</h3>
+      <div class="event__available-offers">
+        ${offersListTemplate}
+      </div>
+    </section>`
+  );
 }
+
+function createDescriptionTemplate ({description, pictures}) {
+  if(!description) {
+    return '';
+  }
+
+  const picturesListTemplate = pictures.map((picture) => (
+    `<img class="event__photo" src="${picture.src}" alt="${picture.description}">`
+  )).join('');
+
+  return (
+    `<section class="event__section  event__section--destination">
+      <h3 class="event__section-title  event__section-title--destination">
+        Destination
+      </h3>
+      <p class="event__destination-description">
+        ${description}
+      </p>
+      <div class="event__photos-container">
+        <div class="event__photos-tape">
+          ${picturesListTemplate}
+        </div>
+      </div>
+    </section>`
+  );
+}
+
 function createTemplate({point, availableDestinations, destination, availableTypes, availableOffers}) {
   const {base_price: basePrice, date_from: dateFrom, date_to: dateTo, offers, type, id} = point;
-  const {name: destinationName, description: destinationDescription} = destination;
+  const {name: destinationName} = destination;
 
   const humanDateTimeFrom = humanizeDateTime(dateFrom);
   const humanDateTimeTo = humanizeDateTime(dateTo);
 
   const eventTypeTemplate = createEventTypeTemplate(availableTypes);
   const destinationsTemplate = createDestinationsTemplate(availableDestinations);
-  const offersTemplate = creteOffersTemplate(availableOffers, offers);
+  const offersTemplate = createOffersTemplate(availableOffers, offers);
+  const descriptionTemplate = createDescriptionTemplate(destination);
 
   return (
     `<form class="event event--edit" action="#" method="post">
@@ -94,21 +135,8 @@ function createTemplate({point, availableDestinations, destination, availableTyp
         </button>
       </header>
       <section class="event__details">
-        <section class="event__section  event__section--offers">
-          <h3 class="event__section-title  event__section-title--offers">Offers</h3>
-          <div class="event__available-offers">
-            ${offersTemplate}
-          </div>
-        </section>
-
-        <section class="event__section  event__section--destination">
-          <h3 class="event__section-title  event__section-title--destination">
-            ${destinationName}
-          </h3>
-          <p class="event__destination-description">
-            ${destinationDescription}
-          </p>
-        </section>
+        ${offersTemplate}
+        ${descriptionTemplate}
       </section>
     </form>`
   );
