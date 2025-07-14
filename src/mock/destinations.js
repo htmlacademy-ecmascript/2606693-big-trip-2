@@ -159,7 +159,7 @@ const destinations = [
         description: 'Saint Petersburg with crowded streets',
       },
       {
-        src: 'https://22.objects.htmlacademy.pro/static/destinations/5.jpg',
+        src: 'https://22.objects.htmlacademy.pro/static/destinations/6.jpg',
         description: 'Saint Petersburg with a beautiful old town',
       },
     ],
