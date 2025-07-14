@@ -9,4 +9,9 @@ const DateFormat = {
   DURATION_DAY_HOUR_MINUTE: 'DD[D] HH[H] mm[M]'
 };
 
-export {POINTS_COUNT, DateFormat};
+const BasePrice = {
+  MIN: 100,
+  MAX: 9999
+};
+
+export {POINTS_COUNT, DateFormat, BasePrice};

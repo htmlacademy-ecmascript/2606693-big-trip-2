@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
-import { DateFormat } from './const.js';
+import { DateFormat, BasePrice } from './const.js';
 
 dayjs.extend(duration);
 
@@ -26,4 +26,10 @@ const getTimeDifference = (dateFrom, dateTo) => {
   return durationObject.format(DateFormat.DURATION_DAY_HOUR_MINUTE);
 };
 
-export { humanizeDate, humanizeTime, humanizeDateTime, getTimeDifference, getRandomArrayElement };
+const getBasePrice = (a = BasePrice.MIN, b = BasePrice.MAX) => {
+  const from = Math.ceil(Math.min(a, b));
+  const to = Math.floor(Math.max(a, b));
+  return Math.floor(Math.random() * (to - from + 1)) + from;
+};
+
+export { humanizeDate, humanizeTime, humanizeDateTime, getTimeDifference, getRandomArrayElement, getBasePrice };
