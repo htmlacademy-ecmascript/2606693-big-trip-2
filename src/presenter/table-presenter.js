@@ -40,14 +40,17 @@ class TablePresenter {
     render(new PointEditView(pointEditProperties), this.#pointsListComponent.element);
 
     for (let i = 1; i < this.#points.length; i++) {
-      const properties = {
+      this.#renderPoint({
         point: this.#points[i],
         destinations: this.#destinations,
         offers: this.#offers
-      };
-      render(new PointView(properties), this.#pointsListComponent.element);
+      });
     }
+  }
 
+  #renderPoint(properties) {
+    const pointViewComponent = new PointView(properties);
+    render(pointViewComponent, this.#pointsListComponent.element);
   }
 }
 
