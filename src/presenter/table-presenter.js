@@ -1,4 +1,4 @@
-import { render } from '../render.js';
+import {render} from '../framework/render.js';
 import ListSortView from '../view/list-sort-view.js';
 import PointEditView from '../view/point-edit-view.js';
 import PointsListView from '../view/points-list-view.js';
@@ -30,7 +30,7 @@ class TablePresenter {
       destinations: this.destinations,
       offers: this.offers
     };
-    render(new PointEditView(pointEditProperties), this.pointsListComponent.getElement());
+    render(new PointEditView(pointEditProperties), this.pointsListComponent.element);
 
     for (let i = 1; i < this.points.length; i++) {
       const properties = {
@@ -38,7 +38,7 @@ class TablePresenter {
         destinations: this.destinations,
         offers: this.offers
       };
-      render(new PointView(properties), this.pointsListComponent.getElement());
+      render(new PointView(properties), this.pointsListComponent.element);
     }
 
   }

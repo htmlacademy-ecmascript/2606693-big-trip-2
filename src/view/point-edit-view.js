@@ -1,4 +1,4 @@
-import { createElement } from '../render.js';
+import AbstractView from '../framework/view/abstract-view.js';
 import { humanizeDateTime } from '../utils.js';
 
 function createEventTypeTemplate (types) {
@@ -142,8 +142,9 @@ function createTemplate({point, availableDestinations, destination, availableTyp
   );
 }
 
-class PointEditView {
+class PointEditView extends AbstractView {
   constructor({point, destinations, offers}) {
+    super();
     this.point = point || {};
     this.availableDestinations = destinations || [];
     this.destination = this.availableDestinations.find((destination) => destination.id === point.destination) || {};
@@ -151,7 +152,7 @@ class PointEditView {
     this.availableOffers = offers.find((offersType) => offersType.type === point.type)?.offers || [];
   }
 
-  getTemplate() {
+  get template() {
     const properties = {
       point: this.point,
       availableDestinations: this.availableDestinations,
@@ -160,18 +161,6 @@ class PointEditView {
       availableOffers: this.availableOffers,
     };
     return createTemplate(properties);
-  }
-
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
   }
 }
 

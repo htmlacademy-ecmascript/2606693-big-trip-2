@@ -1,4 +1,4 @@
-import { createElement } from '../render.js';
+import AbstractView from '../framework/view/abstract-view.js';
 import { humanizeDate, humanizeTime, getTimeDifference} from '../utils.js';
 
 function createSelectedOffersTemplate (offers) {
@@ -74,33 +74,22 @@ function createTemplate({point, destination, selectedOffers}) {
   );
 }
 
-class PointView {
+class PointView extends AbstractView {
   constructor({point, destinations, offers}) {
+    super();
     this.point = point || {};
     this.destination = destinations.find((destination) => destination.id === point.destination) || {};
     this.availableOffers = offers.find((offersType) => offersType.type === point.type)?.offers || [];
     this.selectedOffers = this.availableOffers.filter((offer) => this.availableOffers.includes(offer.id)) || [];
   }
 
-  getTemplate() {
+  get template() {
     const properties = {
       point: this.point,
       destination: this.destination,
       selectedOffers: this.selectedOffers
     };
     return createTemplate(properties);
-  }
-
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
   }
 }
 
