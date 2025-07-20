@@ -5,17 +5,22 @@ import PointsListView from '../view/points-list-view.js';
 import PointView from '../view/point-view.js';
 
 class TablePresenter {
+  #pointsModel = null;
+  #destinationsModel = null;
+  #offersModel = null;
   pointsListComponent = new PointsListView();
 
-  constructor({container, pointsModel}) {
+  constructor({container, pointsModel, destinationsModel, offersModel}) {
     this.container = container;
-    this.pointsModel = pointsModel;
+    this.#pointsModel = pointsModel;
+    this.#destinationsModel = destinationsModel;
+    this.#offersModel = offersModel;
   }
 
   init() {
-    this.points = [...this.pointsModel.getPoints()];
-    this.destinations = [...this.pointsModel.getDestinations()];
-    this.offers = [...this.pointsModel.getOffers()];
+    this.points = [...this.#pointsModel.points];
+    this.destinations = [...this.#destinationsModel.destinations];
+    this.offers = [...this.#offersModel.offers];
 
     render(new ListSortView(), this.container);
     render(this.pointsListComponent, this.container);
