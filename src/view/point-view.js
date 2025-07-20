@@ -75,22 +75,38 @@ function createTemplate({point, destination, selectedOffers}) {
 }
 
 class PointView extends AbstractView {
-  constructor({point, destinations, offers}) {
+  #point = null;
+  #destination = null;
+  #availableOffers = [];
+  #selectedOffers = [];
+
+  #handleEditClick = null;
+
+  constructor({point, destinations, offers, onEditClick}) {
     super();
-    this.point = point || {};
-    this.destination = destinations.find((destination) => destination.id === point.destination) || {};
-    this.availableOffers = offers.find((offersType) => offersType.type === point.type)?.offers || [];
-    this.selectedOffers = this.availableOffers.filter((offer) => this.availableOffers.includes(offer.id)) || [];
+    this.#point = point || {};
+    this.#destination = destinations.find((destination) => destination.id === point.destination) || {};
+    this.#availableOffers = offers.find((offersType) => offersType.type === point.type)?.offers || [];
+    this.#selectedOffers = this.#availableOffers.filter((offer) => this.#availableOffers.includes(offer.id)) || [];
+
+    this.#handleEditClick = onEditClick;
+    this.element.querySelector('.event__rollup-btn')
+      .addEventListener('click', this.#editClickHandler);
   }
 
   get template() {
     const properties = {
-      point: this.point,
-      destination: this.destination,
-      selectedOffers: this.selectedOffers
+      point: this.#point,
+      destination: this.#destination,
+      selectedOffers: this.#selectedOffers
     };
     return createTemplate(properties);
   }
+
+  #editClickHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleEditClick();
+  };
 }
 
 export default PointView;

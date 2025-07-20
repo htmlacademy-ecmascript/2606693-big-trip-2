@@ -143,25 +143,50 @@ function createTemplate({point, availableDestinations, destination, availableTyp
 }
 
 class PointEditView extends AbstractView {
-  constructor({point, destinations, offers}) {
+  #point = null;
+  #destination = null;
+  #availableDestinations = [];
+  #availableTypes = [];
+  #availableOffers = [];
+
+  #handleFormSubmit = null;
+  #handleQuitEditClick = null;
+
+  constructor({point, destinations, offers, onFormSubmit, onQuitEditClick}) {
     super();
-    this.point = point || {};
-    this.availableDestinations = destinations || [];
-    this.destination = this.availableDestinations.find((destination) => destination.id === point.destination) || {};
-    this.availableTypes = offers.map((offersType) => offersType.type) || [];
-    this.availableOffers = offers.find((offersType) => offersType.type === point.type)?.offers || [];
+    this.#point = point || {};
+    this.#availableDestinations = destinations || [];
+    this.#destination = this.#availableDestinations.find((destination) => destination.id === point.destination) || {};
+    this.#availableTypes = offers.map((offersType) => offersType.type) || [];
+    this.#availableOffers = offers.find((offersType) => offersType.type === point.type)?.offers || [];
+
+    this.#handleFormSubmit = onFormSubmit;
+    this.#handleQuitEditClick = onQuitEditClick;
+    this.element.addEventListener('submit', this.#formSubmitHandler);
+    this.element.querySelector('.event__rollup-btn')
+      .addEventListener('click', this.#editClickHandler);
   }
 
   get template() {
     const properties = {
-      point: this.point,
-      availableDestinations: this.availableDestinations,
-      destination: this.destination,
-      availableTypes: this.availableTypes,
-      availableOffers: this.availableOffers,
+      point: this.#point,
+      availableDestinations: this.#availableDestinations,
+      destination: this.#destination,
+      availableTypes: this.#availableTypes,
+      availableOffers: this.#availableOffers,
     };
     return createTemplate(properties);
   }
+
+  #formSubmitHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleFormSubmit();
+  };
+
+  #editClickHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleQuitEditClick();
+  };
 }
 
 export default PointEditView;
