@@ -27,16 +27,7 @@ class TablePresenter {
     this.#destinations = [...this.#destinationsModel.destinations];
     this.#offers = [...this.#offersModel.offers];
 
-    render(new ListSortView(), this.#tableContainer);
-    render(this.#pointsListComponent, this.#tableContainer);
-
-    for (let i = 1; i < this.#points.length; i++) {
-      this.#renderPoint({
-        point: this.#points[i],
-        destinations: this.#destinations,
-        offers: this.#offers
-      });
-    }
+    this.#renderTable();
   }
 
   #renderPoint(properties) {
@@ -77,6 +68,19 @@ class TablePresenter {
     }
 
     render(pointComponent, this.#pointsListComponent.element);
+  }
+
+  #renderTable() {
+    render(new ListSortView(), this.#tableContainer);
+    render(this.#pointsListComponent, this.#tableContainer);
+
+    for (let i = 1; i < this.#points.length; i++) {
+      this.#renderPoint({
+        point: this.#points[i],
+        destinations: this.#destinations,
+        offers: this.#offers
+      });
+    }
   }
 }
 
