@@ -1,4 +1,5 @@
 import { render, replace } from '../framework/render.js';
+import { isEscapeKey } from '../utils/common.js';
 import ListSortView from '../view/list-sort-view.js';
 import PointEditView from '../view/point-edit-view.js';
 import PointsListView from '../view/points-list-view.js';
@@ -32,7 +33,7 @@ class TablePresenter {
 
   #renderPoint(properties) {
     const escKeyDownHandler = (evt) => {
-      if (evt.key === 'Escape') {
+      if (isEscapeKey(evt)) {
         evt.preventDefault();
         replaceFormToItem();
         document.removeEventListener('keydown', escKeyDownHandler);
