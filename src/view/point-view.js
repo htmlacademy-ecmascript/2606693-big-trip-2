@@ -87,7 +87,7 @@ class PointView extends AbstractView {
     this.#point = point || {};
     this.#destination = destinations.find((destination) => destination.id === point.destination) || {};
     this.#availableOffers = offers.find((offersType) => offersType.type === point.type)?.offers || [];
-    this.#selectedOffers = this.#availableOffers.filter((offer) => this.#availableOffers.includes(offer.id)) || [];
+    this.#selectedOffers = this.#availableOffers.filter((offer) => this.#point.offers.includes(offer.id)) || [];
 
     this.#handleEditClick = onEditClick;
     this.element.querySelector('.event__rollup-btn')
