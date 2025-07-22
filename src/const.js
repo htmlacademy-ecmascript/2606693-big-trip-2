@@ -1,5 +1,7 @@
 const POINTS_COUNT = 3;
 
+const TEST_DATE = '2025-10-07T07:00:00';
+
 const DateFormat = {
   MONTH_DAY:'MMM D',
   HOUR_MINUTE: 'HH:mm',
@@ -21,4 +23,18 @@ const NoPointsMessage = {
   FUTURE: 'There are no future events now'
 };
 
-export {POINTS_COUNT, DateFormat, BasePrice, NoPointsMessage};
+const FilterType = {
+  EVERYTHING: 'everything',
+  FUTURE: 'future',
+  PRESENT: 'present',
+  PAST:'past'
+};
+
+export {
+  POINTS_COUNT,
+  TEST_DATE,
+  DateFormat,
+  BasePrice,
+  NoPointsMessage,
+  FilterType
+};
