@@ -4,15 +4,14 @@ import ListSortView from '../view/list-sort-view.js';
 import PointEditView from '../view/point-edit-view.js';
 import PointsListView from '../view/points-list-view.js';
 import PointView from '../view/point-view.js';
+import NoPointsView from '../view/no-points-view.js';
+import { NoPointsMessage } from '../const.js';
 
 class TablePresenter {
   #tableContainer = null;
   #pointsModel = null;
   #destinationsModel = null;
   #offersModel = null;
-  #points = [];
-  #destinations = [];
-  #offers = [];
 
   #pointsListComponent = new PointsListView();
 
@@ -80,7 +79,14 @@ class TablePresenter {
 
     const points = this.#pointsModel.points;
 
-    for (let i = 1; i < points.length; i++) {
+    if (points.length === 0) {
+      render(new NoPointsView({
+        message: NoPointsMessage.EVERYTHING
+      }), this.#tableContainer);
+      return;
+    }
+
+    for (let i = 0; i < points.length; i++) {
       const point = points[i];
       this.#renderPoint({
         point,

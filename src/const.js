@@ -1,4 +1,4 @@
-const POINTS_COUNT = 4;
+const POINTS_COUNT = 3;
 
 const DateFormat = {
   MONTH_DAY:'MMM D',
@@ -14,4 +14,11 @@ const BasePrice = {
   MAX: 9999
 };
 
-export {POINTS_COUNT, DateFormat, BasePrice};
+const NoPointsMessage = {
+  EVERYTHING: 'Click New Event to create your first point',
+  PAST: 'There are no past events now',
+  PRESENT: 'There are no present events now',
+  FUTURE: 'There are no future events now'
+};
+
+export {POINTS_COUNT, DateFormat, BasePrice, NoPointsMessage};
