@@ -1,8 +1,8 @@
 import AbstractView from '../framework/view/abstract-view.js';
 import { humanizeDateTime } from '../utils/point.js';
 
-function createEventTypeTemplate (availableTypes, selectedType) {
-  return availableTypes.map((type, i) => (
+function createEventTypeTemplate (pointTypes, selectedType) {
+  return pointTypes.map((type, i) => (
     `<div class="event__type-item">
       <input id="event-type-${type}-${i}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type}" ${type === selectedType ? 'checked' : ''}>
       <label class="event__type-label  event__type-label--${type}" for="event-type-${type}-${i}">
@@ -12,8 +12,8 @@ function createEventTypeTemplate (availableTypes, selectedType) {
   )).join('');
 }
 
-function createDestinationsTemplate (destinations) {
-  return destinations.map(({name}) => (
+function createDestinationsTemplate (allDestinations) {
+  return allDestinations.map(({name}) => (
     `<option value="${name}"></option>`
   )).join('');
 }
@@ -73,16 +73,16 @@ function createDescriptionTemplate ({description, pictures}) {
   );
 }
 
-function createTemplate({point, availableDestinations, destination, availableTypes, availableOffers}) {
-  const {base_price: basePrice, date_from: dateFrom, date_to: dateTo, offers, type, id} = point;
+function createTemplate({point, allDestinations, destination, pointTypes, availableOffers}) {
+  const {base_price: basePrice, date_from: dateFrom, date_to: dateTo, offers: selectedOfferIds, type, id} = point;
   const {name: destinationName} = destination;
 
   const humanDateTimeFrom = humanizeDateTime(dateFrom);
   const humanDateTimeTo = humanizeDateTime(dateTo);
 
-  const eventTypeTemplate = createEventTypeTemplate(availableTypes, type);
-  const destinationsTemplate = createDestinationsTemplate(availableDestinations);
-  const offersTemplate = createOffersTemplate(availableOffers, offers);
+  const eventTypeTemplate = createEventTypeTemplate(pointTypes, type);
+  const destinationsTemplate = createDestinationsTemplate(allDestinations);
+  const offersTemplate = createOffersTemplate(availableOffers, selectedOfferIds);
   const descriptionTemplate = createDescriptionTemplate(destination);
 
   return (
@@ -145,20 +145,20 @@ function createTemplate({point, availableDestinations, destination, availableTyp
 class PointEditView extends AbstractView {
   #point = null;
   #destination = null;
-  #availableDestinations = [];
-  #availableTypes = [];
+  #allDestinations = [];
+  #pointTypes = [];
   #availableOffers = [];
 
   #handleFormSubmit = null;
   #handleQuitEditClick = null;
 
-  constructor({point, destinations, offers, onFormSubmit, onQuitEditClick}) {
+  constructor({point, destination, allDestinations, availableOffers, pointTypes, onFormSubmit, onQuitEditClick}) {
     super();
-    this.#point = point || {};
-    this.#availableDestinations = destinations || [];
-    this.#destination = this.#availableDestinations.find((destination) => destination.id === point.destination) || {};
-    this.#availableTypes = offers.map((offersType) => offersType.type) || [];
-    this.#availableOffers = offers.find((offersType) => offersType.type === point.type)?.offers || [];
+    this.#point = point;
+    this.#allDestinations = allDestinations;
+    this.#destination = destination;
+    this.#pointTypes = pointTypes;
+    this.#availableOffers = availableOffers;
 
     this.#handleFormSubmit = onFormSubmit;
     this.#handleQuitEditClick = onQuitEditClick;
@@ -168,14 +168,13 @@ class PointEditView extends AbstractView {
   }
 
   get template() {
-    const properties = {
+    return createTemplate({
       point: this.#point,
-      availableDestinations: this.#availableDestinations,
+      allDestinations: this.#allDestinations,
       destination: this.#destination,
-      availableTypes: this.#availableTypes,
+      pointTypes: this.#pointTypes,
       availableOffers: this.#availableOffers,
-    };
-    return createTemplate(properties);
+    });
   }
 
   #formSubmitHandler = (evt) => {

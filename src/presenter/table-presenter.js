@@ -24,14 +24,10 @@ class TablePresenter {
   }
 
   init() {
-    this.#points = [...this.#pointsModel.points];
-    this.#destinations = [...this.#destinationsModel.destinations];
-    this.#offers = [...this.#offersModel.offers];
-
     this.#renderTable();
   }
 
-  #renderPoint(properties) {
+  #renderPoint({point, allDestinations, destination, availableOffers, selectedOffers, pointTypes}) {
     const escKeyDownHandler = (evt) => {
       if (isEscapeKey(evt)) {
         evt.preventDefault();
@@ -41,7 +37,10 @@ class TablePresenter {
     };
 
     const pointComponent = new PointView({
-      ...properties,
+      point,
+      destination,
+      availableOffers,
+      selectedOffers,
       onEditClick: () => {
         replaceItemToForm();
         document.addEventListener('keydown', escKeyDownHandler);
@@ -49,7 +48,11 @@ class TablePresenter {
     });
 
     const pointEditComponent = new PointEditView({
-      ...properties,
+      point,
+      destination,
+      allDestinations,
+      availableOffers,
+      pointTypes,
       onFormSubmit: () => {
         replaceFormToItem();
         document.removeEventListener('keydown', escKeyDownHandler);
@@ -75,11 +78,17 @@ class TablePresenter {
     render(new ListSortView(), this.#tableContainer);
     render(this.#pointsListComponent, this.#tableContainer);
 
-    for (let i = 1; i < this.#points.length; i++) {
+    const points = this.#pointsModel.points;
+
+    for (let i = 1; i < points.length; i++) {
+      const point = points[i];
       this.#renderPoint({
-        point: this.#points[i],
-        destinations: this.#destinations,
-        offers: this.#offers
+        point,
+        allDestinations: this.#destinationsModel.destinations,
+        destination: this.#destinationsModel.getDestinationById(point.destination),
+        availableOffers: this.#offersModel.getOffersByType(point.type),
+        selectedOffers: this.#offersModel.getOffersByIds(point.offers),
+        pointTypes: this.#offersModel.getPointTypes()
       });
     }
   }
