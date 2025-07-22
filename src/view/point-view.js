@@ -77,16 +77,14 @@ function createTemplate({point, destination, selectedOffers}) {
 class PointView extends AbstractView {
   #point = null;
   #destination = null;
-  #availableOffers = [];
   #selectedOffers = [];
 
   #handleEditClick = null;
 
-  constructor({point, destination, availableOffers, selectedOffers, onEditClick}) {
+  constructor({point, destination, selectedOffers, onEditClick}) {
     super();
     this.#point = point;
     this.#destination = destination;
-    this.#availableOffers = availableOffers;
     this.#selectedOffers = selectedOffers;
 
     this.#handleEditClick = onEditClick;
