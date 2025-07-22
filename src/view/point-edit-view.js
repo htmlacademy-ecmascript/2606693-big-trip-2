@@ -1,10 +1,10 @@
 import AbstractView from '../framework/view/abstract-view.js';
 import { humanizeDateTime } from '../utils/point.js';
 
-function createEventTypeTemplate (types) {
-  return types.map((type, i) => (
+function createEventTypeTemplate (availableTypes, selectedType) {
+  return availableTypes.map((type, i) => (
     `<div class="event__type-item">
-      <input id="event-type-${type}-${i}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type}">
+      <input id="event-type-${type}-${i}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type}" ${type === selectedType ? 'checked' : ''}>
       <label class="event__type-label  event__type-label--${type}" for="event-type-${type}-${i}">
         ${type}
       </label>
@@ -80,7 +80,7 @@ function createTemplate({point, availableDestinations, destination, availableTyp
   const humanDateTimeFrom = humanizeDateTime(dateFrom);
   const humanDateTimeTo = humanizeDateTime(dateTo);
 
-  const eventTypeTemplate = createEventTypeTemplate(availableTypes);
+  const eventTypeTemplate = createEventTypeTemplate(availableTypes, type);
   const destinationsTemplate = createDestinationsTemplate(availableDestinations);
   const offersTemplate = createOffersTemplate(availableOffers, offers);
   const descriptionTemplate = createDescriptionTemplate(destination);
