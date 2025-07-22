@@ -1,8 +1,8 @@
 import AbstractView from '../framework/view/abstract-view.js';
 import { humanizeDate, humanizeTime, getTimeDifference} from '../utils/point.js';
 
-function createSelectedOffersTemplate (offers) {
-  return offers.map(({title, price}) => (
+function createSelectedOffersTemplate (selectedOffers) {
+  return selectedOffers.map(({title, price}) => (
     `<li class="event__offer">
       <span class="event__offer-title">${title}</span>
       &plus;&euro;&nbsp;
@@ -77,17 +77,15 @@ function createTemplate({point, destination, selectedOffers}) {
 class PointView extends AbstractView {
   #point = null;
   #destination = null;
-  #availableOffers = [];
   #selectedOffers = [];
 
   #handleEditClick = null;
 
-  constructor({point, destinations, offers, onEditClick}) {
+  constructor({point, destination, selectedOffers, onEditClick}) {
     super();
-    this.#point = point || {};
-    this.#destination = destinations.find((destination) => destination.id === point.destination) || {};
-    this.#availableOffers = offers.find((offersType) => offersType.type === point.type)?.offers || [];
-    this.#selectedOffers = this.#availableOffers.filter((offer) => this.#availableOffers.includes(offer.id)) || [];
+    this.#point = point;
+    this.#destination = destination;
+    this.#selectedOffers = selectedOffers;
 
     this.#handleEditClick = onEditClick;
     this.element.querySelector('.event__rollup-btn')
@@ -95,12 +93,11 @@ class PointView extends AbstractView {
   }
 
   get template() {
-    const properties = {
+    return createTemplate({
       point: this.#point,
       destination: this.#destination,
       selectedOffers: this.#selectedOffers
-    };
-    return createTemplate(properties);
+    });
   }
 
   #editClickHandler = (evt) => {
