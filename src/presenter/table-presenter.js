@@ -1,4 +1,4 @@
-import { render, replace } from '../framework/render.js';
+import { render, replace} from '../framework/render.js';
 import { isEscapeKey } from '../utils/common.js';
 import ListSortView from '../view/list-sort-view.js';
 import PointEditView from '../view/point-edit-view.js';
@@ -14,6 +14,9 @@ class TablePresenter {
   #offersModel = null;
 
   #pointsListComponent = new PointsListView();
+  #sortComponent = new ListSortView();
+
+  #tablePoints = [];
 
   constructor({container, pointsModel, destinationsModel, offersModel}) {
     this.#tableContainer = container;
@@ -23,6 +26,8 @@ class TablePresenter {
   }
 
   init() {
+    this.#tablePoints = [...this.#pointsModel.points];
+
     this.#renderTable();
   }
 
@@ -73,21 +78,20 @@ class TablePresenter {
     render(pointComponent, this.#pointsListComponent.element);
   }
 
-  #renderTable() {
-    render(new ListSortView(), this.#tableContainer);
+  #renderNoPoints() {
+    render(new NoPointsView({
+      message: NoPointsMessage.EVERYTHING
+    }), this.#tableContainer);
+  }
+
+  #renderSort() {
+    render(this.#sortComponent, this.#tableContainer);
+  }
+
+  #renderPointsList() {
     render(this.#pointsListComponent, this.#tableContainer);
 
-    const points = this.#pointsModel.points;
-
-    if (points.length === 0) {
-      render(new NoPointsView({
-        message: NoPointsMessage.EVERYTHING
-      }), this.#tableContainer);
-      return;
-    }
-
-    for (let i = 0; i < points.length; i++) {
-      const point = points[i];
+    this.#tablePoints.forEach((point) => {
       this.#renderPoint({
         point,
         allDestinations: this.#destinationsModel.destinations,
@@ -96,7 +100,17 @@ class TablePresenter {
         selectedOffers: this.#offersModel.getOffersByIds(point.offers),
         pointTypes: this.#offersModel.getPointTypes()
       });
+    });
+  }
+
+  #renderTable() {
+    if (this.#tablePoints.length === 0) {
+      this.#renderNoPoints();
+      return;
     }
+
+    this.#renderSort();
+    this.#renderPointsList();
   }
 }
 
