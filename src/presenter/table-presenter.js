@@ -33,6 +33,10 @@ class TablePresenter {
     this.#renderTable();
   }
 
+  #handleModeChange = () => {
+    this.#pointPresenters.forEach((presenter) => presenter.resetView());
+  };
+
   #handlePointChange = (updatedProperties) => {
     this.#tablePoints = updateItem(this.#tablePoints, updatedProperties.point);
     this.#pointPresenters.get(updatedProperties.point.id).init(updatedProperties);
@@ -42,7 +46,8 @@ class TablePresenter {
     const {point} = properties;
     const pointPresenter = new PointPresenter({
       pointsListContainer: this.#pointsListComponent.element,
-      onDataChange: this.#handlePointChange
+      onDataChange: this.#handlePointChange,
+      onModeChange: this.#handleModeChange
     });
 
     pointPresenter.init(properties);

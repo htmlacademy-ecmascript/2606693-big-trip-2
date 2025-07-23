@@ -2,6 +2,7 @@ import {render, replace, remove} from '../framework/render.js';
 import PointView from '../view/point-view.js';
 import PointEditView from '../view/point-edit-view.js';
 import { isEscapeKey } from '../utils/common.js';
+import { Mode } from '../const.js';
 
 class PointPresenter {
   #pointsListContainer = null;
@@ -10,12 +11,15 @@ class PointPresenter {
   #pointEditComponent = null;
 
   #properties = null;
+  #mode = Mode.DEFAULT;
 
   #handleDataChange = null;
+  #handleModeChange = null;
 
-  constructor({pointsListContainer, onDataChange}) {
+  constructor({pointsListContainer, onDataChange, onModeChange}) {
     this.#pointsListContainer = pointsListContainer;
     this.#handleDataChange = onDataChange;
+    this.#handleModeChange = onModeChange;
   }
 
   init(properties) {
@@ -41,11 +45,11 @@ class PointPresenter {
       return;
     }
 
-    if (this.#pointsListContainer.contains(prevPointComponent.element)) {
+    if (this.#mode === Mode.DEFAULT) {
       replace(this.#pointComponent, prevPointComponent);
     }
 
-    if (this.#pointsListContainer.contains(prevPointEditComponent.element)) {
+    if (this.#mode === Mode.EDITING) {
       replace(this.#pointEditComponent, prevPointEditComponent);
     }
 
@@ -58,14 +62,23 @@ class PointPresenter {
     remove(this.#pointEditComponent);
   }
 
+  resetView() {
+    if (this.#mode !== Mode.DEFAULT) {
+      this.#replaceFormToItem();
+    }
+  }
+
   #replaceItemToForm() {
     replace(this.#pointEditComponent, this.#pointComponent);
     document.addEventListener('keydown', this.#escKeyDownHandler);
+    this.#handleModeChange();
+    this.#mode = Mode.EDITING;
   }
 
   #replaceFormToItem() {
     replace(this.#pointComponent, this.#pointEditComponent);
     document.removeEventListener('keydown', this.#escKeyDownHandler);
+    this.#mode = Mode.DEFAULT;
   }
 
   #escKeyDownHandler = (evt) => {
