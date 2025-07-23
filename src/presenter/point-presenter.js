@@ -9,42 +9,29 @@ class PointPresenter {
   #pointComponent = null;
   #pointEditComponent = null;
 
-  #point = null;
-  #destination = null;
-  #allDestinations = [];
-  #availableOffers = [];
-  #selectedOffers = [];
-  #pointTypes = [];
+  #properties = null;
 
-  constructor({pointsListContainer}) {
+  #handleDataChange = null;
+
+  constructor({pointsListContainer, onDataChange}) {
     this.#pointsListContainer = pointsListContainer;
+    this.#handleDataChange = onDataChange;
   }
 
-  init({point, allDestinations, destination, availableOffers, selectedOffers, pointTypes}) {
-    this.#point = point;
-    this.#destination = destination;
-    this.#allDestinations = allDestinations;
-    this.#availableOffers = availableOffers;
-    this.#selectedOffers = selectedOffers;
-    this.#pointTypes = pointTypes;
+  init(properties) {
+    this.#properties = properties;
 
     const prevPointComponent = this.#pointComponent;
     const prevPointEditComponent = this.#pointEditComponent;
 
     this.#pointComponent = new PointView({
-      point: this.#point,
-      destination: this.#destination,
-      availableOffers: this.#availableOffers,
-      selectedOffers: this.#selectedOffers,
-      onEditClick: this.#handleEditClick
+      ...this.#properties,
+      onEditClick: this.#handleEditClick,
+      onFavoriteClick: this.#handleFavoriteClick
     });
 
     this.#pointEditComponent = new PointEditView({
-      point: this.#point,
-      destination: this.#destination,
-      allDestinations: this.#allDestinations,
-      availableOffers: this.#availableOffers,
-      pointTypes: this.#pointTypes,
+      ...this.#properties,
       onFormSubmit: this.#handleFormSubmit,
       onQuitEditClick: this.#handleQuitEditClick
     });
@@ -96,7 +83,21 @@ class PointPresenter {
     this.#replaceFormToItem();
   };
 
-  #handleFormSubmit = () => {
+  #handleFavoriteClick = () => {
+    this.#handleDataChange({
+      ...this.#properties,
+      point: {
+        ...this.#properties.point,
+        'is_favorite': !this.#properties.point['is_favorite']
+      }
+    });
+  };
+
+  #handleFormSubmit = (point) => {
+    this.#handleDataChange({
+      ...this.#properties,
+      point
+    });
     this.#replaceFormToItem();
   };
 }

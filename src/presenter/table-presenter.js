@@ -4,6 +4,7 @@ import PointsListView from '../view/points-list-view.js';
 import NoPointsView from '../view/no-points-view.js';
 import { NoPointsMessage } from '../const.js';
 import PointPresenter from './point-presenter.js';
+import {updateItem} from '../utils/common.js';
 
 class TablePresenter {
   #tableContainer = null;
@@ -32,10 +33,16 @@ class TablePresenter {
     this.#renderTable();
   }
 
+  #handlePointChange = (updatedProperties) => {
+    this.#tablePoints = updateItem(this.#tablePoints, updatedProperties.point);
+    this.#pointPresenters.get(updatedProperties.point.id).init(updatedProperties);
+  };
+
   #renderPoint(properties) {
     const {point} = properties;
     const pointPresenter = new PointPresenter({
       pointsListContainer: this.#pointsListComponent.element,
+      onDataChange: this.#handlePointChange
     });
 
     pointPresenter.init(properties);
