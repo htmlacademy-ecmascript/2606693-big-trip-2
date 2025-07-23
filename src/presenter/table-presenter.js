@@ -4,6 +4,7 @@ import PointsListView from '../view/points-list-view.js';
 import NoPointsView from '../view/no-points-view.js';
 import { NoPointsMessage } from '../const.js';
 import PointPresenter from './point-presenter.js';
+
 class TablePresenter {
   #tableContainer = null;
   #pointsModel = null;
@@ -14,6 +15,7 @@ class TablePresenter {
   #sortComponent = new ListSortView();
 
   #tablePoints = [];
+  #pointTypes = [];
 
   constructor({container, pointsModel, destinationsModel, offersModel}) {
     this.#tableContainer = container;
@@ -24,6 +26,7 @@ class TablePresenter {
 
   init() {
     this.#tablePoints = [...this.#pointsModel.points];
+    this.#pointTypes = [...this.#offersModel.getPointTypes()];
 
     this.#renderTable();
   }
@@ -56,7 +59,7 @@ class TablePresenter {
         destination: this.#destinationsModel.getDestinationById(point.destination),
         availableOffers: this.#offersModel.getOffersByType(point.type),
         selectedOffers: this.#offersModel.getOffersByIds(point.offers),
-        pointTypes: this.#offersModel.getPointTypes()
+        pointTypes: this.#pointTypes
       });
     });
   }
