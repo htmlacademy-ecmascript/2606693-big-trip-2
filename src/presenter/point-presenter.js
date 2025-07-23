@@ -1,4 +1,4 @@
-import {render, replace} from '../framework/render.js';
+import {render, replace, remove} from '../framework/render.js';
 import PointView from '../view/point-view.js';
 import PointEditView from '../view/point-edit-view.js';
 import { isEscapeKey } from '../utils/common.js';
@@ -28,6 +28,9 @@ class PointPresenter {
     this.#selectedOffers = selectedOffers;
     this.#pointTypes = pointTypes;
 
+    const prevPointComponent = this.#pointComponent;
+    const prevPointEditComponent = this.#pointEditComponent;
+
     this.#pointComponent = new PointView({
       point: this.#point,
       destination: this.#destination,
@@ -46,7 +49,26 @@ class PointPresenter {
       onQuitEditClick: this.#handleQuitEditClick
     });
 
-    render(this.#pointComponent, this.#pointsListContainer);
+    if (prevPointComponent === null || prevPointEditComponent === null) {
+      render(this.#pointComponent, this.#pointsListContainer);
+      return;
+    }
+
+    if (this.#pointsListContainer.contains(prevPointComponent.element)) {
+      replace(this.#pointComponent, prevPointComponent);
+    }
+
+    if (this.#pointsListContainer.contains(prevPointEditComponent.element)) {
+      replace(this.#pointEditComponent, prevPointEditComponent);
+    }
+
+    remove(prevPointComponent);
+    remove(prevPointEditComponent);
+  }
+
+  destroy() {
+    remove(this.#pointComponent);
+    remove(this.#pointEditComponent);
   }
 
   #replaceItemToForm() {
