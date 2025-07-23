@@ -1,12 +1,9 @@
-import { render, replace} from '../framework/render.js';
-import { isEscapeKey } from '../utils/common.js';
+import { render } from '../framework/render.js';
 import ListSortView from '../view/list-sort-view.js';
-import PointEditView from '../view/point-edit-view.js';
 import PointsListView from '../view/points-list-view.js';
-import PointView from '../view/point-view.js';
 import NoPointsView from '../view/no-points-view.js';
 import { NoPointsMessage } from '../const.js';
-
+import PointPresenter from './point-presenter.js';
 class TablePresenter {
   #tableContainer = null;
   #pointsModel = null;
@@ -31,51 +28,12 @@ class TablePresenter {
     this.#renderTable();
   }
 
-  #renderPoint({point, allDestinations, destination, availableOffers, selectedOffers, pointTypes}) {
-    const escKeyDownHandler = (evt) => {
-      if (isEscapeKey(evt)) {
-        evt.preventDefault();
-        replaceFormToItem();
-        document.removeEventListener('keydown', escKeyDownHandler);
-      }
-    };
-
-    const pointComponent = new PointView({
-      point,
-      destination,
-      availableOffers,
-      selectedOffers,
-      onEditClick: () => {
-        replaceItemToForm();
-        document.addEventListener('keydown', escKeyDownHandler);
-      }
+  #renderPoint(properties) {
+    const pointPresenter = new PointPresenter({
+      pointsListContainer: this.#pointsListComponent.element,
     });
 
-    const pointEditComponent = new PointEditView({
-      point,
-      destination,
-      allDestinations,
-      availableOffers,
-      pointTypes,
-      onFormSubmit: () => {
-        replaceFormToItem();
-        document.removeEventListener('keydown', escKeyDownHandler);
-      },
-      onQuitEditClick: () => {
-        replaceFormToItem();
-        document.removeEventListener('keydown', escKeyDownHandler);
-      }
-    });
-
-    function replaceItemToForm() {
-      replace(pointEditComponent, pointComponent);
-    }
-
-    function replaceFormToItem() {
-      replace(pointComponent, pointEditComponent);
-    }
-
-    render(pointComponent, this.#pointsListComponent.element);
+    pointPresenter.init(properties);
   }
 
   #renderNoPoints() {
