@@ -16,6 +16,7 @@ class TablePresenter {
 
   #tablePoints = [];
   #pointTypes = [];
+  #pointPresenters = new Map();
 
   constructor({container, pointsModel, destinationsModel, offersModel}) {
     this.#tableContainer = container;
@@ -32,11 +33,13 @@ class TablePresenter {
   }
 
   #renderPoint(properties) {
+    const {point} = properties;
     const pointPresenter = new PointPresenter({
       pointsListContainer: this.#pointsListComponent.element,
     });
 
     pointPresenter.init(properties);
+    this.#pointPresenters.set(point.id, pointPresenter);
   }
 
   #renderNoPoints() {
@@ -47,6 +50,11 @@ class TablePresenter {
 
   #renderSort() {
     render(this.#sortComponent, this.#tableContainer);
+  }
+
+  #clearPointsList() {
+    this.#pointPresenters.forEach((presenter) => presenter.destroy());
+    this.#pointPresenters.clear();
   }
 
   #renderPointsList() {
