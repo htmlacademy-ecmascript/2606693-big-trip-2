@@ -2,4 +2,6 @@ const getRandomArrayElement = (items) => items[Math.floor(Math.random() * items.
 
 const isEscapeKey = (evt) => evt.key === 'Escape';
 
-export {getRandomArrayElement, isEscapeKey};
+const updateItem = (items, update) => items.map((item) => item.id === update.id ? update : item);
+
+export {getRandomArrayElement, isEscapeKey, updateItem};
