@@ -4,13 +4,13 @@ import {SortType} from '../const.js';
 function createTemplate({sortType}) {
   return (
     `<form class="trip-events__trip-sort  trip-sort" action="#" method="get">
-      <div class="trip-sort__item trip-sort__item--day">
+      <div class="trip-sort__item trip-sort__item--${SortType.DAY}">
         <input
-          id="sort-day"
+          id="sort-${SortType.DAY}"
           class="trip-sort__input  visually-hidden"
           type="radio"
           name="trip-sort"
-          value="sort-day"
+          value="sort-${SortType.DAY}"
           data-sort-type="${SortType.DAY}"
           ${sortType === SortType.DAY ? 'checked' : ''}
         >
@@ -22,26 +22,26 @@ function createTemplate({sortType}) {
         <label class="trip-sort__btn" for="sort-event">Event</label>
       </div>
 
-      <div class="trip-sort__item  trip-sort__item--time">
+      <div class="trip-sort__item  trip-sort__item--${SortType.TIME}">
         <input
-          id="sort-time"
+          id="sort-${SortType.TIME}"
           class="trip-sort__input  visually-hidden"
           type="radio"
           name="trip-sort"
-          value="sort-time"
+          value="sort-${SortType.TIME}"
           data-sort-type="${SortType.TIME}"
           ${sortType === SortType.TIME ? 'checked' : ''}
         >
         <label class="trip-sort__btn" for="sort-time">Time</label>
       </div>
 
-      <div class="trip-sort__item  trip-sort__item--price">
+      <div class="trip-sort__item  trip-sort__item--${SortType.PRICE}">
         <input
-          id="sort-price"
+          id="sort-${SortType.PRICE}"
           class="trip-sort__input  visually-hidden"
           type="radio"
           name="trip-sort"
-          value="sort-price"
+          value="sort-${SortType.PRICE}"
           data-sort-type="${SortType.PRICE}"
           ${sortType === SortType.PRICE ? 'checked' : ''}
         >
