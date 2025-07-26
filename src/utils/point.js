@@ -14,14 +14,14 @@ const getTimeDifference = (dateFrom, dateTo) => {
   const date1 = dayjs(dateFrom);
   const date2 = dayjs(dateTo);
   const datesDifference = date2.diff(date1);
-  const durationObject = dayjs.duration(datesDifference);
-  if (durationObject.asHours() < 1) {
-    return durationObject.format(DateFormat.DURATION_MINUTE);
+  const durationData = dayjs.duration(datesDifference);
+  if (durationData.asHours() < 1) {
+    return durationData.format(DateFormat.DURATION_MINUTE);
   }
-  if (durationObject.asDays() < 1) {
-    return durationObject.format(DateFormat.DURATION_HOUR_MINUTE);
+  if (durationData.asDays() < 1) {
+    return durationData.format(DateFormat.DURATION_HOUR_MINUTE);
   }
-  return durationObject.format(DateFormat.DURATION_DAY_HOUR_MINUTE);
+  return durationData.format(DateFormat.DURATION_DAY_HOUR_MINUTE);
 };
 
 const getBasePrice = (a = BasePrice.MIN, b = BasePrice.MAX) => {
