@@ -30,4 +30,15 @@ const getBasePrice = (a = BasePrice.MIN, b = BasePrice.MAX) => {
   return Math.floor(Math.random() * (to - from + 1)) + from;
 };
 
-export { humanizeDate, humanizeTime, humanizeDateTime, getTimeDifference, getBasePrice };
+const sortPointsByPrice = (pointA, pointB) => pointB.base_price - pointA.base_price;
+
+const sortPointsByTime = (pointA, pointB) => {
+  const timeA = dayjs(pointA.date_to).diff(dayjs(pointA.date_from));
+  const timeB = dayjs(pointB.date_to).diff(dayjs(pointB.date_from));
+
+  return timeB - timeA;
+};
+
+const sortPointsByStartDate = (pointA, pointB) => dayjs(pointA.date_from).diff(dayjs(pointB.date_from));
+
+export { humanizeDate, humanizeTime, humanizeDateTime, getTimeDifference, getBasePrice, sortPointsByStartDate, sortPointsByTime, sortPointsByPrice };

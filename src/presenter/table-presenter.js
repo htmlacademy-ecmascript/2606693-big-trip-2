@@ -1,4 +1,4 @@
-import { render } from '../framework/render.js';
+import { render, remove } from '../framework/render.js';
 import ListSortView from '../view/list-sort-view.js';
 import PointsListView from '../view/points-list-view.js';
 import NoPointsView from '../view/no-points-view.js';
@@ -6,6 +6,7 @@ import { NoPointsMessage } from '../const.js';
 import PointPresenter from './point-presenter.js';
 import {updateItem} from '../utils/common.js';
 import {SortType} from '../const.js';
+import { sortPointsByPrice, sortPointsByStartDate, sortPointsByTime } from '../utils/point.js';
 
 class TablePresenter {
   #tableContainer = null;
@@ -20,6 +21,7 @@ class TablePresenter {
   #pointTypes = [];
   #pointPresenters = new Map();
   #currentSortType = SortType.DAY;
+  #sourcedTablePoints = [];
 
   constructor({container, pointsModel, destinationsModel, offersModel}) {
     this.#tableContainer = container;
@@ -29,7 +31,8 @@ class TablePresenter {
   }
 
   init() {
-    this.#tablePoints = [...this.#pointsModel.points];
+    this.#tablePoints = [...this.#pointsModel.points].sort(sortPointsByStartDate);
+    this.#sourcedTablePoints = [...this.#tablePoints];
     this.#pointTypes = [...this.#offersModel.getPointTypes()];
 
     this.#renderTable();
@@ -41,11 +44,11 @@ class TablePresenter {
 
   #handlePointChange = (updatedProperties) => {
     this.#tablePoints = updateItem(this.#tablePoints, updatedProperties.point);
+    this.#sourcedTablePoints = updateItem(this.#sourcedTablePoints, updatedProperties.point);
     this.#pointPresenters.get(updatedProperties.point.id).init(updatedProperties);
   };
 
   #renderPoint(properties) {
-    const {point} = properties;
     const pointPresenter = new PointPresenter({
       pointsListContainer: this.#pointsListComponent.element,
       onDataChange: this.#handlePointChange,
@@ -53,7 +56,7 @@ class TablePresenter {
     });
 
     pointPresenter.init(properties);
-    this.#pointPresenters.set(point.id, pointPresenter);
+    this.#pointPresenters.set(crypto.randomUUID(), pointPresenter);
   }
 
   #renderNoPoints() {
@@ -62,8 +65,18 @@ class TablePresenter {
     }), this.#tableContainer);
   }
 
-  #sortPoints() {
-
+  #sortPoints(sortType) {
+    switch (sortType) {
+      case SortType.PRICE:
+        this.#tablePoints.sort(sortPointsByPrice);
+        break;
+      case SortType.TIME:
+        this.#tablePoints.sort(sortPointsByTime);
+        break;
+      default:
+        this.#tablePoints = [...this.#sourcedTablePoints];
+    }
+    this.#currentSortType = sortType;
   }
 
   #handleSortTypeChange = (sortType) => {
@@ -71,8 +84,15 @@ class TablePresenter {
       return;
     }
 
-    this.#sortPoints();
+    this.#sortPoints(sortType);
+    this.#clearPointsList();
+    this.#clearSort();
+    this.#renderTable();
   };
+
+  #clearSort() {
+    remove(this.#sortComponent);
+  }
 
   #renderSort() {
     this.#sortComponent = new ListSortView({
