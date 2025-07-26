@@ -5,6 +5,7 @@ import NoPointsView from '../view/no-points-view.js';
 import { NoPointsMessage } from '../const.js';
 import PointPresenter from './point-presenter.js';
 import {updateItem} from '../utils/common.js';
+import {SortType} from '../const.js';
 
 class TablePresenter {
   #tableContainer = null;
@@ -13,11 +14,12 @@ class TablePresenter {
   #offersModel = null;
 
   #pointsListComponent = new PointsListView();
-  #sortComponent = new ListSortView();
+  #sortComponent = null;
 
   #tablePoints = [];
   #pointTypes = [];
   #pointPresenters = new Map();
+  #currentSortType = SortType.DAY;
 
   constructor({container, pointsModel, destinationsModel, offersModel}) {
     this.#tableContainer = container;
@@ -60,7 +62,23 @@ class TablePresenter {
     }), this.#tableContainer);
   }
 
+  #sortPoints() {
+
+  }
+
+  #handleSortTypeChange = (sortType) => {
+    if (this.#currentSortType === sortType) {
+      return;
+    }
+
+    this.#sortPoints();
+  };
+
   #renderSort() {
+    this.#sortComponent = new ListSortView({
+      currentSortType: this.#currentSortType,
+      onSortTypeChange: this.#handleSortTypeChange
+    });
     render(this.#sortComponent, this.#tableContainer);
   }
 

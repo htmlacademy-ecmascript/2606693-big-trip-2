@@ -35,6 +35,12 @@ const Mode = {
   EDITING: 'EDITING',
 };
 
+const SortType = {
+  DAY: 'day',
+  TIME: 'time',
+  PRICE: 'price',
+};
+
 export {
   POINTS_COUNT,
   TEST_DATE,
@@ -42,5 +48,6 @@ export {
   BasePrice,
   NoPointsMessage,
   FilterType,
-  Mode
+  Mode,
+  SortType
 };
