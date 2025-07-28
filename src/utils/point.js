@@ -14,14 +14,14 @@ const getTimeDifference = (dateFrom, dateTo) => {
   const date1 = dayjs(dateFrom);
   const date2 = dayjs(dateTo);
   const datesDifference = date2.diff(date1);
-  const durationObject = dayjs.duration(datesDifference);
-  if (durationObject.asHours() < 1) {
-    return durationObject.format(DateFormat.DURATION_MINUTE);
+  const durationData = dayjs.duration(datesDifference);
+  if (durationData.asHours() < 1) {
+    return durationData.format(DateFormat.DURATION_MINUTE);
   }
-  if (durationObject.asDays() < 1) {
-    return durationObject.format(DateFormat.DURATION_HOUR_MINUTE);
+  if (durationData.asDays() < 1) {
+    return durationData.format(DateFormat.DURATION_HOUR_MINUTE);
   }
-  return durationObject.format(DateFormat.DURATION_DAY_HOUR_MINUTE);
+  return durationData.format(DateFormat.DURATION_DAY_HOUR_MINUTE);
 };
 
 const getBasePrice = (a = BasePrice.MIN, b = BasePrice.MAX) => {
@@ -30,4 +30,15 @@ const getBasePrice = (a = BasePrice.MIN, b = BasePrice.MAX) => {
   return Math.floor(Math.random() * (to - from + 1)) + from;
 };
 
-export { humanizeDate, humanizeTime, humanizeDateTime, getTimeDifference, getBasePrice };
+const sortPointsByPrice = (pointA, pointB) => pointB.base_price - pointA.base_price;
+
+const sortPointsByTime = (pointA, pointB) => {
+  const timeA = dayjs(pointA.date_to).diff(dayjs(pointA.date_from));
+  const timeB = dayjs(pointB.date_to).diff(dayjs(pointB.date_from));
+
+  return timeB - timeA;
+};
+
+const sortPointsByStartDate = (pointA, pointB) => dayjs(pointA.date_from).diff(dayjs(pointB.date_from));
+
+export { humanizeDate, humanizeTime, humanizeDateTime, getTimeDifference, getBasePrice, sortPointsByStartDate, sortPointsByTime, sortPointsByPrice };

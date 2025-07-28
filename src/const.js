@@ -1,4 +1,4 @@
-const POINTS_COUNT = 3;
+const POINTS_COUNT = 10;
 
 const TEST_DATE = '2025-10-07T07:00:00';
 
@@ -35,6 +35,12 @@ const Mode = {
   EDITING: 'EDITING',
 };
 
+const SortType = {
+  DAY: 'day',
+  TIME: 'time',
+  PRICE: 'price',
+};
+
 export {
   POINTS_COUNT,
   TEST_DATE,
@@ -42,5 +48,6 @@ export {
   BasePrice,
   NoPointsMessage,
   FilterType,
-  Mode
+  Mode,
+  SortType
 };
