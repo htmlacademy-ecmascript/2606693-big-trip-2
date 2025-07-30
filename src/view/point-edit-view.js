@@ -1,4 +1,4 @@
-import AbstractView from '../framework/view/abstract-view.js';
+import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import { humanizeDateTime } from '../utils/point.js';
 
 function createEventTypeTemplate (pointTypes, selectedType) {
@@ -150,18 +150,17 @@ function createTemplate({point, extraData}) {
   );
 }
 
-class PointEditView extends AbstractView {
-  #point = null;
-  #extraData = null;
-
+class PointEditView extends AbstractStatefulView {
   #handleFormSubmit = null;
   #handleQuitEditClick = null;
   #handleDataRequest = null;
 
   constructor({point, extraData, onFormSubmit, onQuitEditClick, onDataRequest}) {
     super();
-    this.#point = point;
-    this.#extraData = extraData;
+    this._setState(PointEditView.parsePointToState({
+      point,
+      extraData
+    }));
 
     this.#handleFormSubmit = onFormSubmit;
     this.#handleQuitEditClick = onQuitEditClick;
@@ -172,21 +171,26 @@ class PointEditView extends AbstractView {
   }
 
   get template() {
-    return createTemplate({
-      point: this.#point,
-      extraData: this.#extraData
-    });
+    return createTemplate(this._state);
   }
 
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
-    this.#handleFormSubmit(this.#point);
+    this.#handleFormSubmit(PointEditView.parseStateToPoint(this._state));
   };
 
   #editClickHandler = (evt) => {
     evt.preventDefault();
     this.#handleQuitEditClick();
   };
+
+  static parsePointToState(properties) {
+    return {...properties};
+  }
+
+  static parseStateToPoint(state) {
+    return {...state};
+  }
 }
 
 export default PointEditView;
