@@ -1,5 +1,4 @@
 import { getBasePrice } from '../utils/point.js';
-import { getRandomArrayElement } from '../utils/common.js';
 
 const points = [
   {
@@ -299,8 +298,4 @@ const points = [
   }
 ];
 
-function getRandomPoint() {
-  return getRandomArrayElement(points);
-}
-
-export { getRandomPoint, points };
+export { points };
