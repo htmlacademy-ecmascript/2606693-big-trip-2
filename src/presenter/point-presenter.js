@@ -15,11 +15,13 @@ class PointPresenter {
 
   #handleDataChange = null;
   #handleModeChange = null;
+  #handleDataRequest = null;
 
-  constructor({pointsListContainer, onDataChange, onModeChange}) {
+  constructor({pointsListContainer, onDataChange, onModeChange, onDataRequest}) {
     this.#pointsListContainer = pointsListContainer;
     this.#handleDataChange = onDataChange;
     this.#handleModeChange = onModeChange;
+    this.#handleDataRequest = onDataRequest;
   }
 
   init(properties) {
@@ -37,7 +39,8 @@ class PointPresenter {
     this.#pointEditComponent = new PointEditView({
       ...this.#properties,
       onFormSubmit: this.#handleFormSubmit,
-      onQuitEditClick: this.#handleQuitEditClick
+      onQuitEditClick: this.#handleQuitEditClick,
+      onDataRequest: this.#handleDataRequest
     });
 
     if (prevPointComponent === null || prevPointEditComponent === null) {

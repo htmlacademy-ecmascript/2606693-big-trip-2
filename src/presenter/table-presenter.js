@@ -18,7 +18,6 @@ class TablePresenter {
   #sortComponent = null;
 
   #tablePoints = [];
-  #pointTypes = [];
   #pointPresenters = new Map();
   #currentSortType = SortType.DAY;
   #sourcedTablePoints = [];
@@ -33,7 +32,6 @@ class TablePresenter {
   init() {
     this.#tablePoints = [...this.#pointsModel.points].sort(sortPointsByStartDate);
     this.#sourcedTablePoints = [...this.#tablePoints];
-    this.#pointTypes = [...this.#offersModel.getPointTypes()];
 
     this.#renderTable();
   }
@@ -48,11 +46,20 @@ class TablePresenter {
     this.#pointPresenters.get(updatedProperties.point.id).init(updatedProperties);
   };
 
+  #handleDataRequest = (point) => ({
+    allDestinations: this.#destinationsModel.destinations,
+    pointTypes: this.#offersModel.getPointTypes(),
+    destination: this.#destinationsModel.getDestinationById(point.destination),
+    availableOffers: this.#offersModel.getOffersByType(point.type),
+    selectedOffers: this.#offersModel.getOffersByIds(point.offers)
+  });
+
   #renderPoint(properties) {
     const pointPresenter = new PointPresenter({
       pointsListContainer: this.#pointsListComponent.element,
       onDataChange: this.#handlePointChange,
-      onModeChange: this.#handleModeChange
+      onModeChange: this.#handleModeChange,
+      onDataRequest: this.#handleDataRequest
     });
 
     pointPresenter.init(properties);
@@ -113,11 +120,7 @@ class TablePresenter {
     this.#tablePoints.forEach((point) => {
       this.#renderPoint({
         point,
-        allDestinations: this.#destinationsModel.destinations,
-        destination: this.#destinationsModel.getDestinationById(point.destination),
-        availableOffers: this.#offersModel.getOffersByType(point.type),
-        selectedOffers: this.#offersModel.getOffersByIds(point.offers),
-        pointTypes: this.#pointTypes
+        extraData: this.#handleDataRequest(point)
       });
     });
   }

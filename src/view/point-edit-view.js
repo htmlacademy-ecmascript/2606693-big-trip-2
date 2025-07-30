@@ -13,22 +13,22 @@ function createEventTypeTemplate (pointTypes, selectedType) {
 }
 
 function createDestinationsTemplate (allDestinations) {
-  return allDestinations.map(({name}) => (
-    `<option value="${name}"></option>`
+  return allDestinations.map(({name, id}) => (
+    `<option value="${name}" id=${id}></option>`
   )).join('');
 }
 
-function createOffersTemplate (availableOffers, selectedOfferIds) {
+function createOffersTemplate (availableOffers, selectedOffers) {
   if (availableOffers.length === 0) {
     return '';
   }
 
   const offersListTemplate = availableOffers.map(({id, title, price}) => {
-    const isChecked = selectedOfferIds.includes(id);
+    const isChecked = selectedOffers.some((offer) => offer.id === id);
     return (
       `<div class="event__offer-selector">
-        <input class="event__offer-checkbox  visually-hidden" id="event-offer-${id}" type="checkbox" name="event-offer-${id}" ${isChecked ? 'checked' : ''}>
-        <label class="event__offer-label" for="event-offer-${id}">
+        <input class="event__offer-checkbox  visually-hidden" id="${id}" type="checkbox" name="event-offer-${id}" ${isChecked ? 'checked' : ''}>
+        <label class="event__offer-label" for="${id}">
           <span class="event__offer-title">${title}</span>
           &plus;&euro;&nbsp;
           <span class="event__offer-price">${price}</span>
@@ -73,8 +73,9 @@ function createDescriptionTemplate ({description, pictures}) {
   );
 }
 
-function createTemplate({point, allDestinations, destination, pointTypes, availableOffers}) {
-  const {base_price: basePrice, date_from: dateFrom, date_to: dateTo, offers: selectedOfferIds, type, id} = point;
+function createTemplate({point, extraData}) {
+  const {base_price: basePrice, date_from: dateFrom, date_to: dateTo, type, id} = point;
+  const {allDestinations, destination, pointTypes, availableOffers, selectedOffers} = extraData;
   const {name: destinationName} = destination;
 
   const humanDateTimeFrom = humanizeDateTime(dateFrom);
@@ -82,7 +83,7 @@ function createTemplate({point, allDestinations, destination, pointTypes, availa
 
   const eventTypeTemplate = createEventTypeTemplate(pointTypes, type);
   const destinationsTemplate = createDestinationsTemplate(allDestinations);
-  const offersTemplate = createOffersTemplate(availableOffers, selectedOfferIds);
+  const offersTemplate = createOffersTemplate(availableOffers, selectedOffers);
   const descriptionTemplate = createDescriptionTemplate(destination);
 
   return (
@@ -107,7 +108,14 @@ function createTemplate({point, allDestinations, destination, pointTypes, availa
           <label class="event__label  event__type-output" for="event-destination-${id}">
             ${type}
           </label>
-          <input class="event__input  event__input--destination" id="event-destination-${id}" type="text" name="event-destination" value="${destinationName}" list="destination-list-${id}">
+          <input
+            class="event__input event__input--destination"
+            id="event-destination-${id}"
+            type="text"
+            name="event-destination"
+            value="${destinationName}"
+            list="destination-list-${id}"
+          >
           <datalist id="destination-list-${id}">
             ${destinationsTemplate}
           </datalist>
@@ -144,24 +152,20 @@ function createTemplate({point, allDestinations, destination, pointTypes, availa
 
 class PointEditView extends AbstractView {
   #point = null;
-  #destination = null;
-  #allDestinations = [];
-  #pointTypes = [];
-  #availableOffers = [];
+  #extraData = null;
 
   #handleFormSubmit = null;
   #handleQuitEditClick = null;
+  #handleDataRequest = null;
 
-  constructor({point, destination, allDestinations, availableOffers, pointTypes, onFormSubmit, onQuitEditClick}) {
+  constructor({point, extraData, onFormSubmit, onQuitEditClick, onDataRequest}) {
     super();
     this.#point = point;
-    this.#allDestinations = allDestinations;
-    this.#destination = destination;
-    this.#pointTypes = pointTypes;
-    this.#availableOffers = availableOffers;
+    this.#extraData = extraData;
 
     this.#handleFormSubmit = onFormSubmit;
     this.#handleQuitEditClick = onQuitEditClick;
+    this.#handleDataRequest = onDataRequest;
     this.element.addEventListener('submit', this.#formSubmitHandler);
     this.element.querySelector('.event__rollup-btn')
       .addEventListener('click', this.#editClickHandler);
@@ -170,10 +174,7 @@ class PointEditView extends AbstractView {
   get template() {
     return createTemplate({
       point: this.#point,
-      allDestinations: this.#allDestinations,
-      destination: this.#destination,
-      pointTypes: this.#pointTypes,
-      availableOffers: this.#availableOffers,
+      extraData: this.#extraData
     });
   }
 
