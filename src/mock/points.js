@@ -303,4 +303,4 @@ function getRandomPoint() {
   return getRandomArrayElement(points);
 }
 
-export { getRandomPoint };
+export { getRandomPoint, points };

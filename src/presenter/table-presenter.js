@@ -56,7 +56,7 @@ class TablePresenter {
     });
 
     pointPresenter.init(properties);
-    this.#pointPresenters.set(crypto.randomUUID(), pointPresenter);
+    this.#pointPresenters.set(properties.point.id, pointPresenter);
   }
 
   #renderNoPoints() {
