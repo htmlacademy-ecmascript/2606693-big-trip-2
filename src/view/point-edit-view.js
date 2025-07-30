@@ -180,6 +180,7 @@ class PointEditView extends AbstractStatefulView {
     this.element.addEventListener('submit', this.#formSubmitHandler);
     this.element.querySelector('.event__rollup-btn')
       .addEventListener('click', this.#editClickHandler);
+    this.element.querySelector('.event__input--price').addEventListener('input', this.#basePriceChangeHandler);
   }
 
   #eventTypeChangeHandler = (evt) => {
@@ -209,6 +210,11 @@ class PointEditView extends AbstractStatefulView {
       point:updatedPoint,
       extraData: this.#handleDataRequest(updatedPoint),
     });
+  };
+
+  #basePriceChangeHandler = (evt) => {
+    evt.preventDefault();
+    this._state.point['base_price'] = evt.target.value;
   };
 
   #formSubmitHandler = (evt) => {
