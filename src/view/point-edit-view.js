@@ -173,6 +173,13 @@ class PointEditView extends AbstractStatefulView {
     return createTemplate(this._state);
   }
 
+
+  reset(properties) {
+    this.updateElement(
+      PointEditView.parsePointToState(properties),
+    );
+  }
+
   _restoreHandlers() {
     this.element.querySelectorAll('.event__type-input').forEach((input) => input.addEventListener('change', this.#eventTypeChangeHandler));
     this.element.querySelector('.event__input--destination')

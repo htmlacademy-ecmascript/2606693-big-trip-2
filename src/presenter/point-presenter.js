@@ -87,6 +87,7 @@ class PointPresenter {
   #escKeyDownHandler = (evt) => {
     if (isEscapeKey(evt)) {
       evt.preventDefault();
+      this.#pointEditComponent.reset(this.#properties);
       this.#replaceFormToItem();
     }
   };
@@ -96,6 +97,7 @@ class PointPresenter {
   };
 
   #handleQuitEditClick = () => {
+    this.#pointEditComponent.reset(this.#properties);
     this.#replaceFormToItem();
   };
 
