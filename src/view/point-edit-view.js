@@ -181,6 +181,7 @@ class PointEditView extends AbstractStatefulView {
     this.element.querySelector('.event__rollup-btn')
       .addEventListener('click', this.#editClickHandler);
     this.element.querySelector('.event__input--price').addEventListener('input', this.#basePriceChangeHandler);
+    this.element.querySelectorAll('.event__offer-checkbox').forEach((input) => input.addEventListener('input', this.#selectedOffersChangeHandler));
   }
 
   #eventTypeChangeHandler = (evt) => {
@@ -215,6 +216,17 @@ class PointEditView extends AbstractStatefulView {
   #basePriceChangeHandler = (evt) => {
     evt.preventDefault();
     this._state.point['base_price'] = evt.target.value;
+  };
+
+  #selectedOffersChangeHandler = () => {
+    const updatedPoint = {
+      ...this._state.point,
+      offers: [...this.element.querySelectorAll('.event__offer-checkbox:checked')].map((item) => item.id)
+    };
+    this.updateElement({
+      point:updatedPoint,
+      extraData: this.#handleDataRequest(updatedPoint),
+    });
   };
 
   #formSubmitHandler = (evt) => {
