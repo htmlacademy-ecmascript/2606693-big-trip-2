@@ -174,10 +174,12 @@ class PointEditView extends AbstractStatefulView {
   }
 
   _restoreHandlers() {
+    this.element.querySelectorAll('.event__type-input').forEach((input) => input.addEventListener('change', this.#eventTypeChangeHandler));
+    this.element.querySelector('.event__input--destination')
+      .addEventListener('change', this.#eventDestinationChangeHandler);
     this.element.addEventListener('submit', this.#formSubmitHandler);
     this.element.querySelector('.event__rollup-btn')
       .addEventListener('click', this.#editClickHandler);
-    this.element.querySelectorAll('.event__type-input').forEach((input) => input.addEventListener('change', this.#eventTypeChangeHandler));
   }
 
   #eventTypeChangeHandler = (evt) => {
@@ -190,6 +192,22 @@ class PointEditView extends AbstractStatefulView {
     this.updateElement({
       point:updatedPoint,
       extraData:this.#handleDataRequest(updatedPoint)
+    });
+  };
+
+  #eventDestinationChangeHandler = (evt) => {
+    evt.preventDefault();
+    const updatedDestination = this._state.extraData.allDestinations.find((destination) => destination.name === evt.target.value);
+    if (!updatedDestination) {
+      return;
+    }
+    const updatedPoint = {
+      ...this._state.point,
+      destination: updatedDestination.id
+    };
+    this.updateElement({
+      point:updatedPoint,
+      extraData: this.#handleDataRequest(updatedPoint),
     });
   };
 
