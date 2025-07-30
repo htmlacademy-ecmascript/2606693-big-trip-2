@@ -109,10 +109,9 @@ class PointPresenter {
     });
   };
 
-  #handleFormSubmit = (point) => {
+  #handleFormSubmit = (properties) => {
     this.#handleDataChange({
-      ...this.#properties,
-      point
+      ...properties
     });
     this.#replaceFormToItem();
   };
