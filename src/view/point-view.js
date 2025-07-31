@@ -82,11 +82,11 @@ class PointView extends AbstractView {
   #handleEditClick = null;
   #handleFavoriteClick = null;
 
-  constructor({point, destination, selectedOffers, onEditClick, onFavoriteClick}) {
+  constructor({point, extraData, onEditClick, onFavoriteClick}) {
     super();
     this.#point = point;
-    this.#destination = destination;
-    this.#selectedOffers = selectedOffers;
+    this.#destination = extraData.destination;
+    this.#selectedOffers = extraData.selectedOffers;
 
     this.#handleEditClick = onEditClick;
     this.#handleFavoriteClick = onFavoriteClick;

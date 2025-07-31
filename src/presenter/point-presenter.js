@@ -15,11 +15,13 @@ class PointPresenter {
 
   #handleDataChange = null;
   #handleModeChange = null;
+  #handleDataRequest = null;
 
-  constructor({pointsListContainer, onDataChange, onModeChange}) {
+  constructor({pointsListContainer, onDataChange, onModeChange, onDataRequest}) {
     this.#pointsListContainer = pointsListContainer;
     this.#handleDataChange = onDataChange;
     this.#handleModeChange = onModeChange;
+    this.#handleDataRequest = onDataRequest;
   }
 
   init(properties) {
@@ -37,7 +39,8 @@ class PointPresenter {
     this.#pointEditComponent = new PointEditView({
       ...this.#properties,
       onFormSubmit: this.#handleFormSubmit,
-      onQuitEditClick: this.#handleQuitEditClick
+      onQuitEditClick: this.#handleQuitEditClick,
+      onDataRequest: this.#handleDataRequest
     });
 
     if (prevPointComponent === null || prevPointEditComponent === null) {
@@ -84,6 +87,7 @@ class PointPresenter {
   #escKeyDownHandler = (evt) => {
     if (isEscapeKey(evt)) {
       evt.preventDefault();
+      this.#pointEditComponent.reset(this.#properties);
       this.#replaceFormToItem();
     }
   };
@@ -93,6 +97,7 @@ class PointPresenter {
   };
 
   #handleQuitEditClick = () => {
+    this.#pointEditComponent.reset(this.#properties);
     this.#replaceFormToItem();
   };
 
@@ -106,10 +111,9 @@ class PointPresenter {
     });
   };
 
-  #handleFormSubmit = (point) => {
+  #handleFormSubmit = (properties) => {
     this.#handleDataChange({
-      ...this.#properties,
-      point
+      ...properties
     });
     this.#replaceFormToItem();
   };
