@@ -1,7 +1,7 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import { humanizeDateTime } from '../utils/point.js';
 import flatpickr from 'flatpickr';
-import { DateFormat } from '../const.js';
+import { DateFormat, GAP_IN_MILLISECONDS } from '../const.js';
 
 import 'flatpickr/dist/flatpickr.min.css';
 
@@ -296,7 +296,7 @@ class PointEditView extends AbstractStatefulView {
   #setDatepickerFrom() {
     const config = {
       defaultDate: this._state.point.date_from,
-      maxDate: this._state.point.date_to,
+      maxDate: new Date(new Date(this._state.point.date_to).getTime() - GAP_IN_MILLISECONDS).toISOString(),
       enableTime: true,
       'time_24hr': true,
       dateFormat: DateFormat.FLATPICKR_OUTPUT,
@@ -311,7 +311,7 @@ class PointEditView extends AbstractStatefulView {
   #setDatepickerTo() {
     const config = {
       defaultDate: this._state.point.date_to,
-      minDate: this._state.point.date_from,
+      minDate: new Date(new Date(this._state.point.date_from).getTime() + GAP_IN_MILLISECONDS).toISOString(),
       enableTime: true,
       'time_24hr': true,
       dateFormat: DateFormat.FLATPICKR_OUTPUT,

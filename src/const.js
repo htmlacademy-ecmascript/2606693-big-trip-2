@@ -2,6 +2,8 @@ const POINTS_COUNT = 10;
 
 const TEST_DATE = '2025-10-07T07:00:00';
 
+const GAP_IN_MILLISECONDS = 3_600_000;
+
 const DateFormat = {
   MONTH_DAY:'MMM D',
   HOUR_MINUTE: 'HH:mm',
@@ -50,5 +52,6 @@ export {
   NoPointsMessage,
   FilterType,
   Mode,
-  SortType
+  SortType,
+  GAP_IN_MILLISECONDS
 };
