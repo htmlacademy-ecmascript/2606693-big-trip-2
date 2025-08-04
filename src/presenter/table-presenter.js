@@ -1,10 +1,9 @@
-import { render, remove } from '../framework/render.js';
+import { render, remove, RenderPosition } from '../framework/render.js';
 import ListSortView from '../view/list-sort-view.js';
 import PointsListView from '../view/points-list-view.js';
 import NoPointsView from '../view/no-points-view.js';
 import { NoPointsMessage } from '../const.js';
 import PointPresenter from './point-presenter.js';
-import {updateItem} from '../utils/common.js';
 import {SortType} from '../const.js';
 import { sortPointsByPrice, sortPointsByStartDate, sortPointsByTime } from '../utils/point.js';
 
@@ -17,10 +16,8 @@ class TablePresenter {
   #pointsListComponent = new PointsListView();
   #sortComponent = null;
 
-  #tablePoints = [];
   #pointPresenters = new Map();
   #currentSortType = SortType.DAY;
-  #sourcedTablePoints = [];
 
   constructor({container, pointsModel, destinationsModel, offersModel}) {
     this.#tableContainer = container;
@@ -30,13 +27,16 @@ class TablePresenter {
   }
 
   get points() {
-    return this.#pointsModel.points;
+    switch (this.#currentSortType) {
+      case SortType.TIME:
+        return [...this.#pointsModel.points].sort(sortPointsByTime);
+      case SortType.PRICE:
+        return [...this.#pointsModel.points].sort(sortPointsByPrice);
+    }
+    return [...this.#pointsModel.points].sort(sortPointsByStartDate);
   }
 
   init() {
-    this.#tablePoints = [...this.#pointsModel.points].sort(sortPointsByStartDate);
-    this.#sourcedTablePoints = [...this.#tablePoints];
-
     this.#renderTable();
   }
 
@@ -45,8 +45,6 @@ class TablePresenter {
   };
 
   #handlePointChange = (updatedProperties) => {
-    this.#tablePoints = updateItem(this.#tablePoints, updatedProperties.point);
-    this.#sourcedTablePoints = updateItem(this.#sourcedTablePoints, updatedProperties.point);
     this.#pointPresenters.get(updatedProperties.point.id).init(updatedProperties);
   };
 
@@ -76,26 +74,12 @@ class TablePresenter {
     }), this.#tableContainer);
   }
 
-  #sortPoints(sortType) {
-    switch (sortType) {
-      case SortType.PRICE:
-        this.#tablePoints.sort(sortPointsByPrice);
-        break;
-      case SortType.TIME:
-        this.#tablePoints.sort(sortPointsByTime);
-        break;
-      default:
-        this.#tablePoints = [...this.#sourcedTablePoints];
-    }
-    this.#currentSortType = sortType;
-  }
-
   #handleSortTypeChange = (sortType) => {
     if (this.#currentSortType === sortType) {
       return;
     }
 
-    this.#sortPoints(sortType);
+    this.#currentSortType = sortType;
     this.#clearPointsList();
     this.#clearSort();
     this.#renderTable();
@@ -110,7 +94,7 @@ class TablePresenter {
       currentSortType: this.#currentSortType,
       onSortTypeChange: this.#handleSortTypeChange
     });
-    render(this.#sortComponent, this.#tableContainer);
+    render(this.#sortComponent, this.#tableContainer, RenderPosition.AFTERBEGIN);
   }
 
   #clearPointsList() {
@@ -121,7 +105,7 @@ class TablePresenter {
   #renderPointsList() {
     render(this.#pointsListComponent, this.#tableContainer);
 
-    this.#tablePoints.forEach((point) => {
+    this.points.forEach((point) => {
       this.#renderPoint({
         point,
         extraData: this.#handleDataRequest(point)
@@ -130,7 +114,7 @@ class TablePresenter {
   }
 
   #renderTable() {
-    if (this.#tablePoints.length === 0) {
+    if (this.points.length === 0) {
       this.#renderNoPoints();
       return;
     }
