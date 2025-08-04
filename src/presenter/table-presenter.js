@@ -4,7 +4,7 @@ import PointsListView from '../view/points-list-view.js';
 import NoPointsView from '../view/no-points-view.js';
 import { NoPointsMessage } from '../const.js';
 import PointPresenter from './point-presenter.js';
-import {SortType} from '../const.js';
+import { SortType, UpdateType, UserAction} from '../const.js';
 import { sortPointsByPrice, sortPointsByStartDate, sortPointsByTime } from '../utils/point.js';
 
 class TablePresenter {
@@ -15,6 +15,9 @@ class TablePresenter {
 
   #pointsListComponent = new PointsListView();
   #sortComponent = null;
+  #noPointsComponent = new NoPointsView({
+    message: NoPointsMessage.EVERYTHING
+  });
 
   #pointPresenters = new Map();
   #currentSortType = SortType.DAY;
@@ -24,6 +27,8 @@ class TablePresenter {
     this.#pointsModel = pointsModel;
     this.#destinationsModel = destinationsModel;
     this.#offersModel = offersModel;
+
+    this.#pointsModel.addObserver(this.#handleModelEvent);
   }
 
   get points() {
@@ -44,8 +49,34 @@ class TablePresenter {
     this.#pointPresenters.forEach((presenter) => presenter.resetView());
   };
 
-  #handlePointChange = (updatedProperties) => {
-    this.#pointPresenters.get(updatedProperties.point.id).init(updatedProperties);
+  #handleViewAction = (actionType, updateType, update) => {
+    switch (actionType) {
+      case UserAction.UPDATE_TASK:
+        this.#pointsModel.updatePoint(updateType, update);
+        break;
+      case UserAction.ADD_TASK:
+        this.#pointsModel.addPoint(updateType, update);
+        break;
+      case UserAction.DELETE_TASK:
+        this.#pointsModel.deletePoint(updateType, update);
+        break;
+    }
+  };
+
+  #handleModelEvent = (updateType, data) => {
+    switch (updateType) {
+      case UpdateType.PATCH:
+        this.#pointPresenters.get(data.id).init(data);
+        break;
+      case UpdateType.MINOR:
+        this.#clearTable();
+        this.#renderTable();
+        break;
+      case UpdateType.MAJOR:
+        this.#clearTable({resetSortType: true});
+        this.#renderTable();
+        break;
+    }
   };
 
   #handleDataRequest = (point) => ({
@@ -59,7 +90,7 @@ class TablePresenter {
   #renderPoint(properties) {
     const pointPresenter = new PointPresenter({
       pointsListContainer: this.#pointsListComponent.element,
-      onDataChange: this.#handlePointChange,
+      onDataChange: this.#handleViewAction,
       onModeChange: this.#handleModeChange,
       onDataRequest: this.#handleDataRequest
     });
@@ -69,9 +100,7 @@ class TablePresenter {
   }
 
   #renderNoPoints() {
-    render(new NoPointsView({
-      message: NoPointsMessage.EVERYTHING
-    }), this.#tableContainer);
+    render(this.#noPointsComponent, this.#tableContainer);
   }
 
   #handleSortTypeChange = (sortType) => {
@@ -80,14 +109,9 @@ class TablePresenter {
     }
 
     this.#currentSortType = sortType;
-    this.#clearPointsList();
-    this.#clearSort();
+    this.#clearTable();
     this.#renderTable();
   };
-
-  #clearSort() {
-    remove(this.#sortComponent);
-  }
 
   #renderSort() {
     this.#sortComponent = new ListSortView({
@@ -97,14 +121,7 @@ class TablePresenter {
     render(this.#sortComponent, this.#tableContainer, RenderPosition.AFTERBEGIN);
   }
 
-  #clearPointsList() {
-    this.#pointPresenters.forEach((presenter) => presenter.destroy());
-    this.#pointPresenters.clear();
-  }
-
-  #renderPointsList() {
-    render(this.#pointsListComponent, this.#tableContainer);
-
+  #renderPoints() {
     this.points.forEach((point) => {
       this.#renderPoint({
         point,
@@ -113,14 +130,28 @@ class TablePresenter {
     });
   }
 
+  #clearTable({resetSortType = false} = {}) {
+    this.#pointPresenters.forEach((presenter) => presenter.destroy());
+    this.#pointPresenters.clear();
+
+    remove(this.#sortComponent);
+    remove(this.#noPointsComponent);
+
+    if (resetSortType) {
+      this.#currentSortType = SortType.DAY;
+    }
+  }
+
   #renderTable() {
     if (this.points.length === 0) {
       this.#renderNoPoints();
       return;
     }
 
+    render(this.#pointsListComponent, this.#tableContainer);
+
     this.#renderSort();
-    this.#renderPointsList();
+    this.#renderPoints();
   }
 }
 

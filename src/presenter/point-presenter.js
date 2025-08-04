@@ -3,6 +3,7 @@ import PointView from '../view/point-view.js';
 import PointEditView from '../view/point-edit-view.js';
 import { isEscapeKey } from '../utils/common.js';
 import { Mode } from '../const.js';
+import {UserAction, UpdateType} from '../const.js';
 
 class PointPresenter {
   #pointsListContainer = null;
@@ -102,19 +103,22 @@ class PointPresenter {
   };
 
   #handleFavoriteClick = () => {
-    this.#handleDataChange({
-      ...this.#properties,
-      point: {
+    this.#handleDataChange(
+      UserAction.UPDATE_TASK,
+      UpdateType.MINOR,
+      {
         ...this.#properties.point,
         'is_favorite': !this.#properties.point['is_favorite']
-      }
-    });
+      },
+    );
   };
 
   #handleFormSubmit = (properties) => {
-    this.#handleDataChange({
-      ...properties
-    });
+    this.#handleDataChange(
+      UserAction.UPDATE_TASK,
+      UpdateType.MINOR,
+      {...properties}
+    );
     this.#replaceFormToItem();
   };
 }
