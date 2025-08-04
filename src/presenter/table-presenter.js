@@ -29,6 +29,10 @@ class TablePresenter {
     this.#offersModel = offersModel;
   }
 
+  get points() {
+    return this.#pointsModel.points;
+  }
+
   init() {
     this.#tablePoints = [...this.#pointsModel.points].sort(sortPointsByStartDate);
     this.#sourcedTablePoints = [...this.#tablePoints];
