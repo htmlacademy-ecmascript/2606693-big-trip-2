@@ -2,9 +2,8 @@ import { render, remove, RenderPosition } from '../framework/render.js';
 import ListSortView from '../view/list-sort-view.js';
 import PointsListView from '../view/points-list-view.js';
 import NoPointsView from '../view/no-points-view.js';
-import { NoPointsMessage } from '../const.js';
 import PointPresenter from './point-presenter.js';
-import { SortType, UpdateType, UserAction} from '../const.js';
+import { SortType, UpdateType, UserAction, FilterType } from '../const.js';
 import { sortPointsByPrice, sortPointsByStartDate, sortPointsByTime } from '../utils/point.js';
 import {filter} from '../utils/filter.js';
 
@@ -17,12 +16,11 @@ class TablePresenter {
 
   #pointsListComponent = new PointsListView();
   #sortComponent = null;
-  #noPointsComponent = new NoPointsView({
-    message: NoPointsMessage.EVERYTHING
-  });
+  #noPointsComponent = null;
 
   #pointPresenters = new Map();
   #currentSortType = SortType.DAY;
+  #filterType = FilterType.EVERYTHING;
 
   constructor({container, pointsModel, destinationsModel, offersModel, filterModel}) {
     this.#tableContainer = container;
@@ -36,9 +34,9 @@ class TablePresenter {
   }
 
   get points() {
-    const filterType = this.#filterModel.filter;
+    this.#filterType = this.#filterModel.filter;
     const points = this.#pointsModel.points;
-    const filteredPoints = filter[filterType](points);
+    const filteredPoints = filter[this.#filterType](points);
 
     switch (this.#currentSortType) {
       case SortType.TIME:
@@ -111,6 +109,10 @@ class TablePresenter {
   }
 
   #renderNoPoints() {
+    this.#noPointsComponent = new NoPointsView({
+      filterType: this.#filterType
+    });
+
     render(this.#noPointsComponent, this.#tableContainer);
   }
 
@@ -146,7 +148,10 @@ class TablePresenter {
     this.#pointPresenters.clear();
 
     remove(this.#sortComponent);
-    remove(this.#noPointsComponent);
+
+    if (this.#noPointsComponent) {
+      remove(this.#noPointsComponent);
+    }
 
     if (resetSortType) {
       this.#currentSortType = SortType.DAY;
