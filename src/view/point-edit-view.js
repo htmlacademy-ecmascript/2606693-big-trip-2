@@ -1,7 +1,7 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import { humanizeDateTime } from '../utils/point.js';
 import flatpickr from 'flatpickr';
-import { DateFormat, GAP_IN_MILLISECONDS } from '../const.js';
+import { DateFormat, GAP_IN_MILLISECONDS, INTEGER_PATTERN } from '../const.js';
 
 import 'flatpickr/dist/flatpickr.min.css';
 
@@ -269,6 +269,19 @@ class PointEditView extends AbstractStatefulView {
 
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
+
+    const destinationInputValue = this.element.querySelector('.event__input--destination').value.trim();
+    const priceInputValue = this.element.querySelector('.event__input--price').value.trim();
+    const destinationOptions = Array.from(document.querySelectorAll('datalist option')).map((option) => option.value);
+
+    if (!destinationOptions.includes(destinationInputValue)) {
+      return;
+    }
+
+    if (priceInputValue === '' || !INTEGER_PATTERN.test(priceInputValue)) {
+      return;
+    }
+
     this.#handleFormSubmit(PointEditView.parseStateToPoint(this._state));
   };
 

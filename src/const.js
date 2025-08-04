@@ -21,6 +21,8 @@ const BLANK_POINT = {
   'id': crypto.randomUUID()
 };
 
+const INTEGER_PATTERN = /^-?\d+$/;
+
 const DateFormat = {
   MONTH_DAY:'MMM D',
   HOUR_MINUTE: 'HH:mm',
@@ -85,5 +87,6 @@ export {
   GAP_IN_MILLISECONDS,
   UserAction,
   UpdateType,
-  BLANK_POINT
+  BLANK_POINT,
+  INTEGER_PATTERN
 };
