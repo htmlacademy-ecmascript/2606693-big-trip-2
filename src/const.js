@@ -4,6 +4,23 @@ const TEST_DATE = '2025-10-07T07:00:00';
 
 const GAP_IN_MILLISECONDS = 3_600_000;
 
+const DefaultPoint = {
+  DATE_FROM: new Date().toISOString(),
+  DATE_TO: new Date((new Date().getTime() + GAP_IN_MILLISECONDS)).toISOString(),
+  TYPE: 'bus',
+};
+
+const BLANK_POINT = {
+  'base_price': '',
+  'date_from': DefaultPoint.DATE_FROM,
+  'date_to': DefaultPoint.DATE_TO,
+  'destination': '',
+  'is_favorite': false,
+  'offers': [],
+  'type': DefaultPoint.TYPE,
+  'id': crypto.randomUUID()
+};
+
 const DateFormat = {
   MONTH_DAY:'MMM D',
   HOUR_MINUTE: 'HH:mm',
@@ -53,5 +70,6 @@ export {
   FilterType,
   Mode,
   SortType,
-  GAP_IN_MILLISECONDS
+  GAP_IN_MILLISECONDS,
+  BLANK_POINT
 };
