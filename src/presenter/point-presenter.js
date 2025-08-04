@@ -2,8 +2,8 @@ import {render, replace, remove} from '../framework/render.js';
 import PointView from '../view/point-view.js';
 import PointEditView from '../view/point-edit-view.js';
 import { isEscapeKey } from '../utils/common.js';
-import { Mode } from '../const.js';
-import {UserAction, UpdateType} from '../const.js';
+import {UserAction, UpdateType, Mode} from '../const.js';
+import { isDatesEqual } from '../utils/point.js';
 
 class PointPresenter {
   #pointsListContainer = null;
@@ -41,7 +41,8 @@ class PointPresenter {
       ...this.#properties,
       onFormSubmit: this.#handleFormSubmit,
       onQuitEditClick: this.#handleQuitEditClick,
-      onDataRequest: this.#handleDataRequest
+      onDataRequest: this.#handleDataRequest,
+      onDeleteClick: this.#handleDeleteClick
     });
 
     if (prevPointComponent === null || prevPointEditComponent === null) {
@@ -113,13 +114,25 @@ class PointPresenter {
     );
   };
 
-  #handleFormSubmit = (properties) => {
+  #handleFormSubmit = (update) => {
+    const isMinorUpdate =
+      !isDatesEqual(this.#properties.point.date_from, update.point.date_from) ||
+      !isDatesEqual(this.#properties.point.date_to, update.point.date_to);
+
     this.#handleDataChange(
       UserAction.UPDATE_TASK,
-      UpdateType.MINOR,
-      {...properties}
+      isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH,
+      update,
     );
     this.#replaceFormToItem();
+  };
+
+  #handleDeleteClick = (update) => {
+    this.#handleDataChange(
+      UserAction.DELETE_TASK,
+      UpdateType.MINOR,
+      update,
+    );
   };
 }
 

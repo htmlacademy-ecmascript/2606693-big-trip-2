@@ -2,8 +2,25 @@ import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import { humanizeDateTime } from '../utils/point.js';
 import flatpickr from 'flatpickr';
 import { DateFormat, GAP_IN_MILLISECONDS } from '../const.js';
+import dayjs from 'dayjs';
 
 import 'flatpickr/dist/flatpickr.min.css';
+
+const DefaultPoint = {
+  DATE_FROM: dayjs().toISOString(),
+  DATE_TO: dayjs().add(2, 'hour').toISOString(),
+  TYPE: 'bus',
+};
+
+const BLANK_POINT = {
+  'base_price': '',
+  'date_from': DefaultPoint.DATE_FROM,
+  'date_to': DefaultPoint.DATE_TO,
+  'destination': '',
+  'is_favorite': false,
+  'offers': [],
+  'type': DefaultPoint.TYPE,
+};
 
 function createEventTypeTemplate (pointTypes, selectedType) {
   return pointTypes.map((type, i) => (
@@ -161,8 +178,9 @@ class PointEditView extends AbstractStatefulView {
   #handleFormSubmit = null;
   #handleQuitEditClick = null;
   #handleDataRequest = null;
+  #handleDeleteClick = null;
 
-  constructor({point, extraData, onFormSubmit, onQuitEditClick, onDataRequest}) {
+  constructor({point = BLANK_POINT, extraData, onFormSubmit, onQuitEditClick, onDataRequest, onDeleteClick}) {
     super();
     this._setState(PointEditView.parsePointToState({
       point,
@@ -172,6 +190,7 @@ class PointEditView extends AbstractStatefulView {
     this.#handleFormSubmit = onFormSubmit;
     this.#handleQuitEditClick = onQuitEditClick;
     this.#handleDataRequest = onDataRequest;
+    this.#handleDeleteClick = onDeleteClick;
 
     this._restoreHandlers();
   }
@@ -209,6 +228,8 @@ class PointEditView extends AbstractStatefulView {
       .addEventListener('click', this.#editClickHandler);
     this.element.querySelector('.event__input--price').addEventListener('input', this.#basePriceChangeHandler);
     this.element.querySelectorAll('.event__offer-checkbox').forEach((input) => input.addEventListener('input', this.#selectedOffersChangeHandler));
+    this.element.querySelector('.event__reset-btn')
+      .addEventListener('click', this.#formDeleteClickHandler);
     this.#setDatepickerFrom();
     this.#setDatepickerTo();
   }
@@ -322,6 +343,11 @@ class PointEditView extends AbstractStatefulView {
       config
     );
   }
+
+  #formDeleteClickHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleDeleteClick(PointEditView.parseStateToPoint(this._state));
+  };
 
   static parsePointToState(properties) {
     return {...properties};

@@ -52,21 +52,24 @@ class TablePresenter {
   #handleViewAction = (actionType, updateType, update) => {
     switch (actionType) {
       case UserAction.UPDATE_TASK:
-        this.#pointsModel.updatePoint(updateType, update);
+        this.#pointsModel.updatePoint(updateType, update.point);
         break;
       case UserAction.ADD_TASK:
-        this.#pointsModel.addPoint(updateType, update);
+        this.#pointsModel.addPoint(updateType, update.point);
         break;
       case UserAction.DELETE_TASK:
-        this.#pointsModel.deletePoint(updateType, update);
+        this.#pointsModel.deletePoint(updateType, update.point);
         break;
     }
   };
 
-  #handleModelEvent = (updateType, data) => {
+  #handleModelEvent = (updateType, point) => {
     switch (updateType) {
       case UpdateType.PATCH:
-        this.#pointPresenters.get(data.id).init(data);
+        this.#pointPresenters.get(point.id).init({
+          point,
+          extraData: this.#handleDataRequest(point)
+        });
         break;
       case UpdateType.MINOR:
         this.#clearTable();

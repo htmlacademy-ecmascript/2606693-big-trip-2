@@ -41,4 +41,6 @@ const sortPointsByTime = (pointA, pointB) => {
 
 const sortPointsByStartDate = (pointA, pointB) => dayjs(pointA.date_from).diff(dayjs(pointB.date_from));
 
-export { humanizeDate, humanizeTime, humanizeDateTime, getTimeDifference, getBasePrice, sortPointsByStartDate, sortPointsByTime, sortPointsByPrice };
+const isDatesEqual = (dateA, dateB) => (dateA === null && dateB === null) || dayjs(dateA).isSame(dateB, 'D');
+
+export { humanizeDate, humanizeTime, humanizeDateTime, getTimeDifference, getBasePrice, sortPointsByStartDate, sortPointsByTime, sortPointsByPrice, isDatesEqual };
