@@ -105,7 +105,7 @@ class PointPresenter {
 
   #handleFavoriteClick = () => {
     this.#handleDataChange(
-      UserAction.UPDATE_TASK,
+      UserAction.UPDATE_POINT,
       UpdateType.MINOR,
       {
         ...this.#properties.point,
@@ -120,7 +120,7 @@ class PointPresenter {
       !isDatesEqual(this.#properties.point.date_to, update.point.date_to);
 
     this.#handleDataChange(
-      UserAction.UPDATE_TASK,
+      UserAction.UPDATE_POINT,
       isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH,
       update.point,
     );
@@ -129,7 +129,7 @@ class PointPresenter {
 
   #handleDeleteClick = (update) => {
     this.#handleDataChange(
-      UserAction.DELETE_TASK,
+      UserAction.DELETE_POINT,
       UpdateType.MINOR,
       update.point,
     );

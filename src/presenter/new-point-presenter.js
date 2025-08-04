@@ -55,7 +55,7 @@ class NewPointPresenter {
 
   #handleFormSubmit = (update) => {
     this.#handleDataChange(
-      UserAction.ADD_TASK,
+      UserAction.ADD_POINT,
       UpdateType.MINOR,
       update.point
     );
