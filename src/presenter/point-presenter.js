@@ -122,7 +122,7 @@ class PointPresenter {
     this.#handleDataChange(
       UserAction.UPDATE_TASK,
       isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH,
-      update,
+      update.point,
     );
     this.#replaceFormToItem();
   };
@@ -131,7 +131,7 @@ class PointPresenter {
     this.#handleDataChange(
       UserAction.DELETE_TASK,
       UpdateType.MINOR,
-      update,
+      update.point,
     );
   };
 }

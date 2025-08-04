@@ -3,9 +3,10 @@ import ListSortView from '../view/list-sort-view.js';
 import PointsListView from '../view/points-list-view.js';
 import NoPointsView from '../view/no-points-view.js';
 import PointPresenter from './point-presenter.js';
-import { SortType, UpdateType, UserAction, FilterType } from '../const.js';
+import { SortType, UpdateType, UserAction, FilterType, BLANK_POINT } from '../const.js';
 import { sortPointsByPrice, sortPointsByStartDate, sortPointsByTime } from '../utils/point.js';
 import {filter} from '../utils/filter.js';
+import NewPointPresenter from './new-point-presenter.js';
 
 class TablePresenter {
   #tableContainer = null;
@@ -19,15 +20,23 @@ class TablePresenter {
   #noPointsComponent = null;
 
   #pointPresenters = new Map();
+  #newPointPresenter = null;
   #currentSortType = SortType.DAY;
   #filterType = FilterType.EVERYTHING;
 
-  constructor({container, pointsModel, destinationsModel, offersModel, filterModel}) {
+  constructor({container, pointsModel, destinationsModel, offersModel, filterModel, onNewPointDestroy}) {
     this.#tableContainer = container;
     this.#pointsModel = pointsModel;
     this.#destinationsModel = destinationsModel;
     this.#offersModel = offersModel;
     this.#filterModel = filterModel;
+
+    this.#newPointPresenter = new NewPointPresenter({
+      pointsListContainer: this.#pointsListComponent.element,
+      onDataChange: this.#handleViewAction,
+      onDataRequest: this.#handleDataRequest,
+      onDestroy: onNewPointDestroy
+    });
 
     this.#pointsModel.addObserver(this.#handleModelEvent);
     this.#filterModel.addObserver(this.#handleModelEvent);
@@ -51,20 +60,30 @@ class TablePresenter {
     this.#renderTable();
   }
 
+  createPoint() {
+    this.#currentSortType = SortType.DEFAULT;
+    this.#filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
+    this.#newPointPresenter.init({
+      point: BLANK_POINT,
+      extraData: this.#handleDataRequest(BLANK_POINT)
+    });
+  }
+
   #handleModeChange = () => {
+    this.#newPointPresenter.destroy();
     this.#pointPresenters.forEach((presenter) => presenter.resetView());
   };
 
   #handleViewAction = (actionType, updateType, update) => {
     switch (actionType) {
       case UserAction.UPDATE_TASK:
-        this.#pointsModel.updatePoint(updateType, update.point);
+        this.#pointsModel.updatePoint(updateType, update);
         break;
       case UserAction.ADD_TASK:
-        this.#pointsModel.addPoint(updateType, update.point);
+        this.#pointsModel.addPoint(updateType, update);
         break;
       case UserAction.DELETE_TASK:
-        this.#pointsModel.deletePoint(updateType, update.point);
+        this.#pointsModel.deletePoint(updateType, update);
         break;
     }
   };
@@ -91,9 +110,9 @@ class TablePresenter {
   #handleDataRequest = (point) => ({
     allDestinations: this.#destinationsModel.destinations,
     pointTypes: this.#offersModel.getPointTypes(),
-    destination: this.#destinationsModel.getDestinationById(point.destination),
-    availableOffers: this.#offersModel.getOffersByType(point.type),
-    selectedOffers: this.#offersModel.getOffersByIds(point.offers)
+    destination: this.#destinationsModel.getDestinationById(point?.destination),
+    availableOffers: this.#offersModel.getOffersByType(point?.type),
+    selectedOffers: this.#offersModel.getOffersByIds(point?.offers)
   });
 
   #renderPoint(properties) {
@@ -144,6 +163,7 @@ class TablePresenter {
   }
 
   #clearTable({resetSortType = false} = {}) {
+    this.#newPointPresenter.destroy();
     this.#pointPresenters.forEach((presenter) => presenter.destroy());
     this.#pointPresenters.clear();
 

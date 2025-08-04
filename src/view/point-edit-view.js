@@ -2,25 +2,8 @@ import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import { humanizeDateTime } from '../utils/point.js';
 import flatpickr from 'flatpickr';
 import { DateFormat, GAP_IN_MILLISECONDS } from '../const.js';
-import dayjs from 'dayjs';
 
 import 'flatpickr/dist/flatpickr.min.css';
-
-const DefaultPoint = {
-  DATE_FROM: dayjs().toISOString(),
-  DATE_TO: dayjs().add(2, 'hour').toISOString(),
-  TYPE: 'bus',
-};
-
-const BLANK_POINT = {
-  'base_price': '',
-  'date_from': DefaultPoint.DATE_FROM,
-  'date_to': DefaultPoint.DATE_TO,
-  'destination': '',
-  'is_favorite': false,
-  'offers': [],
-  'type': DefaultPoint.TYPE,
-};
 
 function createEventTypeTemplate (pointTypes, selectedType) {
   return pointTypes.map((type, i) => (
@@ -134,7 +117,7 @@ function createTemplate({point, extraData}) {
             id="event-destination-${id}"
             type="text"
             name="event-destination"
-            value="${destinationName}"
+            value="${destinationName ?? ''}"
             list="destination-list-${id}"
           >
           <datalist id="destination-list-${id}">
@@ -180,7 +163,7 @@ class PointEditView extends AbstractStatefulView {
   #handleDataRequest = null;
   #handleDeleteClick = null;
 
-  constructor({point = BLANK_POINT, extraData, onFormSubmit, onQuitEditClick, onDataRequest, onDeleteClick}) {
+  constructor({point, extraData, onFormSubmit, onQuitEditClick, onDataRequest, onDeleteClick}) {
     super();
     this._setState(PointEditView.parsePointToState({
       point,
