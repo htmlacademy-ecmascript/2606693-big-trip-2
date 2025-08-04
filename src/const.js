@@ -4,6 +4,25 @@ const TEST_DATE = '2025-10-07T07:00:00';
 
 const GAP_IN_MILLISECONDS = 3_600_000;
 
+const DefaultPoint = {
+  DATE_FROM: new Date().toISOString(),
+  DATE_TO: new Date((new Date().getTime() + GAP_IN_MILLISECONDS)).toISOString(),
+  TYPE: 'bus',
+};
+
+const BLANK_POINT = {
+  'base_price': '',
+  'date_from': DefaultPoint.DATE_FROM,
+  'date_to': DefaultPoint.DATE_TO,
+  'destination': '',
+  'is_favorite': false,
+  'offers': [],
+  'type': DefaultPoint.TYPE,
+  'id': crypto.randomUUID()
+};
+
+const INTEGER_PATTERN = /^-?\d+$/;
+
 const DateFormat = {
   MONTH_DAY:'MMM D',
   HOUR_MINUTE: 'HH:mm',
@@ -19,18 +38,18 @@ const BasePrice = {
   MAX: 9999
 };
 
-const NoPointsMessage = {
-  EVERYTHING: 'Click New Event to create your first point',
-  PAST: 'There are no past events now',
-  PRESENT: 'There are no present events now',
-  FUTURE: 'There are no future events now'
-};
-
 const FilterType = {
   EVERYTHING: 'everything',
   FUTURE: 'future',
   PRESENT: 'present',
   PAST:'past'
+};
+
+const NoPointsMessage = {
+  [FilterType.EVERYTHING]: 'Click New Event to create your first point',
+  [FilterType.PAST]: 'There are no past events now',
+  [FilterType.PRESENT]: 'There are no present events now',
+  [FilterType.FUTURE]: 'There are no future events now'
 };
 
 const Mode = {
@@ -44,6 +63,18 @@ const SortType = {
   PRICE: 'price',
 };
 
+const UserAction = {
+  UPDATE_POINT: 'UPDATE_POINT',
+  ADD_POINT: 'ADD_POINT',
+  DELETE_POINT: 'DELETE_POINT',
+};
+
+const UpdateType = {
+  PATCH: 'PATCH',
+  MINOR: 'MINOR',
+  MAJOR: 'MAJOR',
+};
+
 export {
   POINTS_COUNT,
   TEST_DATE,
@@ -53,5 +84,9 @@ export {
   FilterType,
   Mode,
   SortType,
-  GAP_IN_MILLISECONDS
+  GAP_IN_MILLISECONDS,
+  UserAction,
+  UpdateType,
+  BLANK_POINT,
+  INTEGER_PATTERN
 };

@@ -1,7 +1,7 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import { humanizeDateTime } from '../utils/point.js';
 import flatpickr from 'flatpickr';
-import { DateFormat, GAP_IN_MILLISECONDS } from '../const.js';
+import { DateFormat, GAP_IN_MILLISECONDS, INTEGER_PATTERN } from '../const.js';
 
 import 'flatpickr/dist/flatpickr.min.css';
 
@@ -117,7 +117,7 @@ function createTemplate({point, extraData}) {
             id="event-destination-${id}"
             type="text"
             name="event-destination"
-            value="${destinationName}"
+            value="${destinationName ?? ''}"
             list="destination-list-${id}"
           >
           <datalist id="destination-list-${id}">
@@ -161,8 +161,9 @@ class PointEditView extends AbstractStatefulView {
   #handleFormSubmit = null;
   #handleQuitEditClick = null;
   #handleDataRequest = null;
+  #handleDeleteClick = null;
 
-  constructor({point, extraData, onFormSubmit, onQuitEditClick, onDataRequest}) {
+  constructor({point, extraData, onFormSubmit, onQuitEditClick, onDataRequest, onDeleteClick}) {
     super();
     this._setState(PointEditView.parsePointToState({
       point,
@@ -172,6 +173,7 @@ class PointEditView extends AbstractStatefulView {
     this.#handleFormSubmit = onFormSubmit;
     this.#handleQuitEditClick = onQuitEditClick;
     this.#handleDataRequest = onDataRequest;
+    this.#handleDeleteClick = onDeleteClick;
 
     this._restoreHandlers();
   }
@@ -209,6 +211,8 @@ class PointEditView extends AbstractStatefulView {
       .addEventListener('click', this.#editClickHandler);
     this.element.querySelector('.event__input--price').addEventListener('input', this.#basePriceChangeHandler);
     this.element.querySelectorAll('.event__offer-checkbox').forEach((input) => input.addEventListener('input', this.#selectedOffersChangeHandler));
+    this.element.querySelector('.event__reset-btn')
+      .addEventListener('click', this.#formDeleteClickHandler);
     this.#setDatepickerFrom();
     this.#setDatepickerTo();
   }
@@ -265,6 +269,19 @@ class PointEditView extends AbstractStatefulView {
 
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
+
+    const destinationInputValue = this.element.querySelector('.event__input--destination').value.trim();
+    const priceInputValue = this.element.querySelector('.event__input--price').value.trim();
+    const destinationOptions = Array.from(document.querySelectorAll('datalist option')).map((option) => option.value);
+
+    if (!destinationOptions.includes(destinationInputValue)) {
+      return;
+    }
+
+    if (priceInputValue === '' || !INTEGER_PATTERN.test(priceInputValue)) {
+      return;
+    }
+
     this.#handleFormSubmit(PointEditView.parseStateToPoint(this._state));
   };
 
@@ -322,6 +339,11 @@ class PointEditView extends AbstractStatefulView {
       config
     );
   }
+
+  #formDeleteClickHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleDeleteClick(PointEditView.parseStateToPoint(this._state));
+  };
 
   static parsePointToState(properties) {
     return {...properties};
