@@ -21,7 +21,7 @@ const BLANK_POINT = {
   'id': crypto.randomUUID()
 };
 
-const INTEGER_PATTERN = /^-?\d+$/;
+const INTEGER_PATTERN = /^[1-9]\d*$/;
 
 const DateFormat = {
   MONTH_DAY:'MMM D',
