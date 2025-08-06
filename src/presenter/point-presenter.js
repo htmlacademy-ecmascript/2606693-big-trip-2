@@ -109,15 +109,15 @@ class PointPresenter {
       UpdateType.MINOR,
       {
         ...this.#properties.point,
-        'is_favorite': !this.#properties.point['is_favorite']
+        isFavorite: !this.#properties.point.isFavorite
       },
     );
   };
 
   #handleFormSubmit = (update) => {
     const isMinorUpdate =
-      !isDatesEqual(this.#properties.point.date_from, update.point.date_from) ||
-      !isDatesEqual(this.#properties.point.date_to, update.point.date_to);
+      !isDatesEqual(this.#properties.point.dateFrom, update.point.dateFrom) ||
+      !isDatesEqual(this.#properties.point.dateTo, update.point.dateTo);
 
     this.#handleDataChange(
       UserAction.UPDATE_POINT,

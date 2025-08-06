@@ -12,7 +12,7 @@ function createSelectedOffersTemplate (selectedOffers) {
 }
 
 function createTemplate({point, destination, selectedOffers}) {
-  const { base_price: basePrice, date_from: dateFrom, date_to: dateTo, is_favorite: isFavorite, type} = point;
+  const { basePrice, dateFrom, dateTo, isFavorite, type} = point;
   const {name: destinationName} = destination;
 
   const humanDateFrom = humanizeDate(dateFrom);

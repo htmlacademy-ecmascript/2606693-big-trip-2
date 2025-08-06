@@ -11,14 +11,14 @@ const DefaultPoint = {
 };
 
 const BLANK_POINT = {
-  'base_price': '',
-  'date_from': DefaultPoint.DATE_FROM,
-  'date_to': DefaultPoint.DATE_TO,
-  'destination': '',
-  'is_favorite': false,
-  'offers': [],
-  'type': DefaultPoint.TYPE,
-  'id': crypto.randomUUID()
+  basePrice: '',
+  dateFrom: DefaultPoint.DATE_FROM,
+  dateTo: DefaultPoint.DATE_TO,
+  destination: '',
+  isFavorite: false,
+  offers: [],
+  type: DefaultPoint.TYPE,
+  id: crypto.randomUUID()
 };
 
 const INTEGER_PATTERN = /^[1-9]\d*$/;

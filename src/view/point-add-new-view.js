@@ -78,7 +78,7 @@ function createDescriptionTemplate ({description, pictures}) {
 }
 
 function createTemplate({point, extraData}) {
-  const {base_price: basePrice, date_from: dateFrom, date_to: dateTo, type, id} = point;
+  const {basePrice, dateFrom, dateTo, type, id} = point;
   const {allDestinations, destination, pointTypes, availableOffers, selectedOffers} = extraData;
   const {name: destinationName} = destination;
 
@@ -244,7 +244,7 @@ class PointAddNewView extends AbstractStatefulView {
     this._setState({
       point: {
         ...this._state.point,
-        'base_price': parseInt(evt.target.value,10)
+        basePrice: parseInt(evt.target.value,10)
       }
     });
   };
@@ -282,7 +282,7 @@ class PointAddNewView extends AbstractStatefulView {
     this._setState({
       point: {
         ...this._state.point,
-        'date_from': selectedDate.toISOString()
+        dateFrom: selectedDate.toISOString()
       }
     });
     this.#setDatepickerTo();
@@ -292,7 +292,7 @@ class PointAddNewView extends AbstractStatefulView {
     this._setState({
       point: {
         ...this._state.point,
-        'date_to': selectedDate.toISOString()
+        dateTo: selectedDate.toISOString()
       }
     });
     this.#setDatepickerFrom();
@@ -300,8 +300,8 @@ class PointAddNewView extends AbstractStatefulView {
 
   #setDatepickerFrom() {
     const config = {
-      defaultDate: this._state.point.date_from,
-      maxDate: new Date(new Date(this._state.point.date_to).getTime() - GAP_IN_MILLISECONDS).toISOString(),
+      defaultDate: this._state.point.dateFrom,
+      maxDate: new Date(new Date(this._state.point.dateTo).getTime() - GAP_IN_MILLISECONDS).toISOString(),
       enableTime: true,
       'time_24hr': true,
       dateFormat: DateFormat.FLATPICKR_OUTPUT,
@@ -315,8 +315,8 @@ class PointAddNewView extends AbstractStatefulView {
 
   #setDatepickerTo() {
     const config = {
-      defaultDate: this._state.point.date_to,
-      minDate: new Date(new Date(this._state.point.date_from).getTime() + GAP_IN_MILLISECONDS).toISOString(),
+      defaultDate: this._state.point.dateTo,
+      minDate: new Date(new Date(this._state.point.dateFrom).getTime() + GAP_IN_MILLISECONDS).toISOString(),
       enableTime: true,
       'time_24hr': true,
       dateFormat: DateFormat.FLATPICKR_OUTPUT,
