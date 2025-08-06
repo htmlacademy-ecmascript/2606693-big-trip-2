@@ -54,3 +54,4 @@ render(newPointButtonComponent, tripMainElement, RenderPosition.BEFOREEND);
 
 tablePresenter.init();
 filterPresenter.init();
+pointsModel.init();

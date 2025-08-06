@@ -1,7 +1,3 @@
-const POINTS_COUNT = 10;
-
-const TEST_DATE = '2025-10-07T07:00:00';
-
 const GAP_IN_MILLISECONDS = 3_600_000;
 
 const DefaultPoint = {
@@ -76,8 +72,6 @@ const UpdateType = {
 };
 
 export {
-  POINTS_COUNT,
-  TEST_DATE,
   DateFormat,
   BasePrice,
   NoPointsMessage,
