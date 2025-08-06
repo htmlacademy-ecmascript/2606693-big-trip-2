@@ -4,7 +4,18 @@ import { getRandomItemsArray } from '../utils/common.js';
 import Observable from '../framework/observable.js';
 
 class PointsModel extends Observable {
+  #pointsApiService = null;
   #points = getRandomItemsArray(points, POINTS_COUNT);
+
+  constructor({pointsApiService}) {
+    super();
+    this.#pointsApiService = pointsApiService;
+
+    this.#pointsApiService.points.then((points) => {
+      // проверка работы запроса к API
+      console.log(points);
+    });
+  }
 
   get points() {
     return this.#points;
