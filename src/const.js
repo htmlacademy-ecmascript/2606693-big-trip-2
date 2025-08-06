@@ -72,6 +72,17 @@ const UpdateType = {
   INIT: 'INIT',
 };
 
+const Method = {
+  GET: 'GET',
+  PUT: 'PUT',
+};
+
+const Url = {
+  POINTS: 'points',
+  OFFERS: 'offers',
+  DESTINATIONS: 'destinations'
+};
+
 export {
   DateFormat,
   BasePrice,
@@ -83,5 +94,7 @@ export {
   UserAction,
   UpdateType,
   BLANK_POINT,
-  INTEGER_PATTERN
+  INTEGER_PATTERN,
+  Method,
+  Url
 };

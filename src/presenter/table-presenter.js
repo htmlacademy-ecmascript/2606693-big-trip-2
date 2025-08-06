@@ -12,8 +12,6 @@ import NewPointPresenter from './new-point-presenter.js';
 class TablePresenter {
   #tableContainer = null;
   #pointsModel = null;
-  #destinationsModel = null;
-  #offersModel = null;
   #filterModel = null;
 
   #pointsListComponent = new PointsListView();
@@ -27,11 +25,9 @@ class TablePresenter {
   #filterType = FilterType.EVERYTHING;
   #isLoading = true;
 
-  constructor({container, pointsModel, destinationsModel, offersModel, filterModel, onNewPointDestroy}) {
+  constructor({container, pointsModel, filterModel, onNewPointDestroy}) {
     this.#tableContainer = container;
     this.#pointsModel = pointsModel;
-    this.#destinationsModel = destinationsModel;
-    this.#offersModel = offersModel;
     this.#filterModel = filterModel;
 
     this.#newPointPresenter = new NewPointPresenter({
@@ -116,11 +112,11 @@ class TablePresenter {
   };
 
   #handleDataRequest = (point) => ({
-    allDestinations: this.#destinationsModel.destinations,
-    pointTypes: this.#offersModel.getPointTypes(),
-    destination: this.#destinationsModel.getDestinationById(point?.destination),
-    availableOffers: this.#offersModel.getOffersByType(point?.type),
-    selectedOffers: this.#offersModel.getOffersByIds(point?.offers)
+    allDestinations: this.#pointsModel.destinations,
+    pointTypes: this.#pointsModel.getPointTypes(),
+    destination: this.#pointsModel.getDestinationById(point?.destination),
+    availableOffers: this.#pointsModel.getOffersByType(point?.type),
+    selectedOffers: this.#pointsModel.getOffersByIds(point?.offers)
   });
 
   #renderPoint(properties) {

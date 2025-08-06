@@ -1,6 +1,4 @@
 import PointsModel from './model/points-model.js';
-import DestinationsModel from './model/destinations-model.js';
-import OffersModel from './model/offers-model.js';
 import { render, RenderPosition } from './framework/render.js';
 import TripInfoView from './view/trip-info-view.js';
 import TablePresenter from './presenter/table-presenter.js';
@@ -19,14 +17,10 @@ const pointsContainerElement = document.querySelector('.trip-events');
 const pointsModel = new PointsModel({
   pointsApiService: new PointsApiService(END_POINT, AUTHORIZATION)
 });
-const destinationsModel = new DestinationsModel();
-const offersModel = new OffersModel();
 const filterModel = new FilterModel();
 const tablePresenter = new TablePresenter({
   container: pointsContainerElement,
   pointsModel,
-  destinationsModel,
-  offersModel,
   filterModel,
   onNewPointDestroy: handleNewPointFormClose
 });
