@@ -2,6 +2,7 @@ import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import { humanizeDateTime } from '../utils/point.js';
 import flatpickr from 'flatpickr';
 import { DateFormat, GAP_IN_MILLISECONDS, INTEGER_PATTERN } from '../const.js';
+import he from 'he';
 
 import 'flatpickr/dist/flatpickr.min.css';
 
@@ -117,7 +118,7 @@ function createTemplate({point, extraData}) {
             id="event-destination-${id}"
             type="text"
             name="event-destination"
-            value="${destinationName ?? ''}"
+            value="${he.encode(destinationName ?? '')}"
             list="destination-list-${id}"
           >
           <datalist id="destination-list-${id}">
@@ -137,7 +138,7 @@ function createTemplate({point, extraData}) {
           <label class="event__label" for="event-price-${id}">
             <span class="visually-hidden">Price</span>&euro;
           </label>
-          <input class="event__input  event__input--price" id="event-price-${id}" type="number" step="1" name="event-price" value="${basePrice}">
+          <input class="event__input  event__input--price" id="event-price-${id}" type="number" step="1" name="event-price" value="${he.encode(basePrice.toString())}">
         </div>
 
         <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
