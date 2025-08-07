@@ -17,7 +17,7 @@ const BLANK_POINT = {
   id: crypto.randomUUID()
 };
 
-const INTEGER_PATTERN = /^[1-9]\d*$/;
+const UNVALID_BASE_PRICE_PATTERN = /\D+/;
 
 const DateFormat = {
   MONTH_DAY:'MMM D',
@@ -30,8 +30,8 @@ const DateFormat = {
 };
 
 const BasePrice = {
-  MIN: 100,
-  MAX: 9999
+  MIN: 1,
+  DEFAULT: 0
 };
 
 const FilterType = {
@@ -94,7 +94,7 @@ export {
   UserAction,
   UpdateType,
   BLANK_POINT,
-  INTEGER_PATTERN,
+  UNVALID_BASE_PRICE_PATTERN,
   Method,
   Url
 };
