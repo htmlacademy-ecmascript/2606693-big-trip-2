@@ -120,6 +120,7 @@ function createTemplate({point, extraData}) {
             name="event-destination"
             value="${he.encode(destinationName ?? '')}"
             list="destination-list-${id}"
+            required
           >
           <datalist id="destination-list-${id}">
             ${destinationsTemplate}
@@ -138,7 +139,7 @@ function createTemplate({point, extraData}) {
           <label class="event__label" for="event-price-${id}">
             <span class="visually-hidden">Price</span>&euro;
           </label>
-          <input class="event__input  event__input--price" id="event-price-${id}" type="number" step="1" name="event-price" value="${he.encode(basePrice.toString())}">
+          <input class="event__input  event__input--price" id="event-price-${id}" type="number" step="1" name="event-price" value="${he.encode(basePrice.toString())}" required>
         </div>
 
         <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
