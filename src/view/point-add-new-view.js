@@ -1,7 +1,8 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import { humanizeDateTime } from '../utils/point.js';
 import flatpickr from 'flatpickr';
-import { DateFormat, GAP_IN_MILLISECONDS, INTEGER_PATTERN } from '../const.js';
+import { DateFormat, GAP_IN_MILLISECONDS, UNVALID_BASE_PRICE_PATTERN, BasePrice } from '../const.js';
+import he from 'he';
 
 import 'flatpickr/dist/flatpickr.min.css';
 
@@ -78,7 +79,7 @@ function createDescriptionTemplate ({description, pictures}) {
 }
 
 function createTemplate({point, extraData}) {
-  const {base_price: basePrice, date_from: dateFrom, date_to: dateTo, type, id} = point;
+  const {basePrice, dateFrom, dateTo, type, id} = point;
   const {allDestinations, destination, pointTypes, availableOffers, selectedOffers} = extraData;
   const {name: destinationName} = destination;
 
@@ -117,8 +118,9 @@ function createTemplate({point, extraData}) {
             id="event-destination-${id}"
             type="text"
             name="event-destination"
-            value="${destinationName ?? ''}"
+            value="${he.encode(destinationName ?? '')}"
             list="destination-list-${id}"
+            required
           >
           <datalist id="destination-list-${id}">
             ${destinationsTemplate}
@@ -137,7 +139,7 @@ function createTemplate({point, extraData}) {
           <label class="event__label" for="event-price-${id}">
             <span class="visually-hidden">Price</span>&euro;
           </label>
-          <input class="event__input  event__input--price" id="event-price-${id}" type="text" name="event-price" value="${basePrice}">
+          <input class="event__input  event__input--price" id="event-price-${id}" type="number" step="1" name="event-price" value="${he.encode(basePrice.toString())}" required>
         </div>
 
         <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
@@ -241,10 +243,18 @@ class PointAddNewView extends AbstractStatefulView {
 
   #basePriceChangeHandler = (evt) => {
     evt.preventDefault();
+    const priceInput = evt.target;
+    const priceInputValue = priceInput.value.trim();
+    const newPriceInputValue = parseInt(priceInputValue, 10) ? parseInt(priceInputValue, 10) : BasePrice.DEFAULT;
+    priceInput.setCustomValidity('');
+    if (newPriceInputValue < BasePrice.MIN || UNVALID_BASE_PRICE_PATTERN.test(priceInputValue)) {
+      priceInput.setCustomValidity(`Введите ЦЕЛОЕ число от ${BasePrice.MIN} и больше`);
+      priceInput.reportValidity();
+    }
     this._setState({
       point: {
         ...this._state.point,
-        'base_price': parseInt(evt.target.value,10)
+        basePrice: newPriceInputValue
       }
     });
   };
@@ -263,15 +273,25 @@ class PointAddNewView extends AbstractStatefulView {
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
 
-    const destinationInputValue = this.element.querySelector('.event__input--destination').value.trim();
-    const priceInputValue = this.element.querySelector('.event__input--price').value.trim();
+    const destinationInput = this.element.querySelector('.event__input--destination');
+    const destinationInputValue = destinationInput.value.trim();
     const destinationOptions = Array.from(document.querySelectorAll('datalist option')).map((option) => option.value);
 
+    const priceInput = this.element.querySelector('.event__input--price');
+    const priceInputValue = priceInput.value.trim();
+
+    destinationInput.setCustomValidity('');
     if (!destinationOptions.includes(destinationInputValue)) {
+      destinationInput.value = '';
+      destinationInput.setCustomValidity('Выберите город из списка, нажав на стрелку');
+      destinationInput.reportValidity();
       return;
     }
 
-    if (priceInputValue === '' || !INTEGER_PATTERN.test(priceInputValue)) {
+    priceInput.setCustomValidity('');
+    if (parseInt(priceInputValue, 10) < BasePrice.MIN || UNVALID_BASE_PRICE_PATTERN.test(priceInputValue)) {
+      priceInput.setCustomValidity(`Введите ЦЕЛОЕ число от ${BasePrice.MIN} и больше`);
+      priceInput.reportValidity();
       return;
     }
 
@@ -282,7 +302,7 @@ class PointAddNewView extends AbstractStatefulView {
     this._setState({
       point: {
         ...this._state.point,
-        'date_from': selectedDate.toISOString()
+        dateFrom: selectedDate.toISOString()
       }
     });
     this.#setDatepickerTo();
@@ -292,7 +312,7 @@ class PointAddNewView extends AbstractStatefulView {
     this._setState({
       point: {
         ...this._state.point,
-        'date_to': selectedDate.toISOString()
+        dateTo: selectedDate.toISOString()
       }
     });
     this.#setDatepickerFrom();
@@ -300,8 +320,8 @@ class PointAddNewView extends AbstractStatefulView {
 
   #setDatepickerFrom() {
     const config = {
-      defaultDate: this._state.point.date_from,
-      maxDate: new Date(new Date(this._state.point.date_to).getTime() - GAP_IN_MILLISECONDS).toISOString(),
+      defaultDate: this._state.point.dateFrom,
+      maxDate: new Date(new Date(this._state.point.dateTo).getTime() - GAP_IN_MILLISECONDS).toISOString(),
       enableTime: true,
       'time_24hr': true,
       dateFormat: DateFormat.FLATPICKR_OUTPUT,
@@ -315,8 +335,8 @@ class PointAddNewView extends AbstractStatefulView {
 
   #setDatepickerTo() {
     const config = {
-      defaultDate: this._state.point.date_to,
-      minDate: new Date(new Date(this._state.point.date_from).getTime() + GAP_IN_MILLISECONDS).toISOString(),
+      defaultDate: this._state.point.dateTo,
+      minDate: new Date(new Date(this._state.point.dateFrom).getTime() + GAP_IN_MILLISECONDS).toISOString(),
       enableTime: true,
       'time_24hr': true,
       dateFormat: DateFormat.FLATPICKR_OUTPUT,

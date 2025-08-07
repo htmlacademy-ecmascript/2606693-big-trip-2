@@ -30,16 +30,16 @@ const getBasePrice = (a = BasePrice.MIN, b = BasePrice.MAX) => {
   return Math.floor(Math.random() * (to - from + 1)) + from;
 };
 
-const sortPointsByPrice = (pointA, pointB) => pointB.base_price - pointA.base_price;
+const sortPointsByPrice = (pointA, pointB) => pointB.basePrice - pointA.basePrice;
 
 const sortPointsByTime = (pointA, pointB) => {
-  const timeA = dayjs(pointA.date_to).diff(dayjs(pointA.date_from));
-  const timeB = dayjs(pointB.date_to).diff(dayjs(pointB.date_from));
+  const timeA = dayjs(pointA.dateTo).diff(dayjs(pointA.dateFrom));
+  const timeB = dayjs(pointB.dateTo).diff(dayjs(pointB.dateFrom));
 
   return timeB - timeA;
 };
 
-const sortPointsByStartDate = (pointA, pointB) => dayjs(pointA.date_from).diff(dayjs(pointB.date_from));
+const sortPointsByStartDate = (pointA, pointB) => dayjs(pointA.dateFrom).diff(dayjs(pointB.dateFrom));
 
 const isDatesEqual = (dateA, dateB) => (dateA === null && dateB === null) || dayjs(dateA).isSame(dateB, 'D');
 

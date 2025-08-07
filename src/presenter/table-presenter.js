@@ -2,6 +2,7 @@ import { render, remove, RenderPosition } from '../framework/render.js';
 import ListSortView from '../view/list-sort-view.js';
 import PointsListView from '../view/points-list-view.js';
 import NoPointsView from '../view/no-points-view.js';
+import LoadingView from '../view/loading-view.js';
 import PointPresenter from './point-presenter.js';
 import { SortType, UpdateType, UserAction, FilterType, BLANK_POINT } from '../const.js';
 import { sortPointsByPrice, sortPointsByStartDate, sortPointsByTime } from '../utils/point.js';
@@ -11,11 +12,10 @@ import NewPointPresenter from './new-point-presenter.js';
 class TablePresenter {
   #tableContainer = null;
   #pointsModel = null;
-  #destinationsModel = null;
-  #offersModel = null;
   #filterModel = null;
 
   #pointsListComponent = new PointsListView();
+  #loadingComponent = new LoadingView();
   #sortComponent = null;
   #noPointsComponent = null;
 
@@ -23,12 +23,11 @@ class TablePresenter {
   #newPointPresenter = null;
   #currentSortType = SortType.DAY;
   #filterType = FilterType.EVERYTHING;
+  #isLoading = true;
 
-  constructor({container, pointsModel, destinationsModel, offersModel, filterModel, onNewPointDestroy}) {
+  constructor({container, pointsModel, filterModel, onNewPointDestroy}) {
     this.#tableContainer = container;
     this.#pointsModel = pointsModel;
-    this.#destinationsModel = destinationsModel;
-    this.#offersModel = offersModel;
     this.#filterModel = filterModel;
 
     this.#newPointPresenter = new NewPointPresenter({
@@ -104,15 +103,20 @@ class TablePresenter {
         this.#clearTable({resetSortType: true});
         this.#renderTable();
         break;
+      case UpdateType.INIT:
+        this.#isLoading = false;
+        remove(this.#loadingComponent);
+        this.#renderTable();
+        break;
     }
   };
 
   #handleDataRequest = (point) => ({
-    allDestinations: this.#destinationsModel.destinations,
-    pointTypes: this.#offersModel.getPointTypes(),
-    destination: this.#destinationsModel.getDestinationById(point?.destination),
-    availableOffers: this.#offersModel.getOffersByType(point?.type),
-    selectedOffers: this.#offersModel.getOffersByIds(point?.offers)
+    allDestinations: this.#pointsModel.destinations,
+    pointTypes: this.#pointsModel.getPointTypes(),
+    destination: this.#pointsModel.getDestinationById(point?.destination),
+    availableOffers: this.#pointsModel.getOffersByType(point?.type),
+    selectedOffers: this.#pointsModel.getOffersByIds(point?.offers)
   });
 
   #renderPoint(properties) {
@@ -162,12 +166,17 @@ class TablePresenter {
     });
   }
 
+  #renderLoading() {
+    render(this.#loadingComponent, this.#tableContainer, RenderPosition.BEFOREEND);
+  }
+
   #clearTable({resetSortType = false} = {}) {
     this.#newPointPresenter.destroy();
     this.#pointPresenters.forEach((presenter) => presenter.destroy());
     this.#pointPresenters.clear();
 
     remove(this.#sortComponent);
+    remove(this.#loadingComponent);
 
     if (this.#noPointsComponent) {
       remove(this.#noPointsComponent);
@@ -179,6 +188,11 @@ class TablePresenter {
   }
 
   #renderTable() {
+    if (this.#isLoading) {
+      this.#renderLoading();
+      return;
+    }
+
     if (this.points.length === 0) {
       this.#renderNoPoints();
       return;

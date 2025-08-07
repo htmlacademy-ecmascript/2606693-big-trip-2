@@ -1,23 +1,20 @@
 import dayjs from 'dayjs';
-import { TEST_DATE, FilterType } from '../const.js';
+import { FilterType } from '../const.js';
 
-// Тестовая дата для проверки рендера разных фильтров (taxi Kioto)
-const testDate = TEST_DATE;
-
-const isFromFuture = (date) => dayjs(testDate).isBefore(dayjs(date));
+const isFromFuture = (date) => dayjs().isBefore(dayjs(date));
 
 const isPresent = (dateFrom, dateTo) => {
-  const currentDate = dayjs(testDate);
+  const currentDate = dayjs();
   return currentDate.isBefore(dayjs(dateTo)) && currentDate.isAfter(dayjs(dateFrom));
 };
 
-const isFromPast = (date) => dayjs(testDate).isAfter(dayjs(date));
+const isFromPast = (date) => dayjs().isAfter(dayjs(date));
 
 const filter = {
   [FilterType.EVERYTHING]: (points) => points,
-  [FilterType.FUTURE]: (points) => points.filter((point) => isFromFuture(point.date_from)),
-  [FilterType.PRESENT]: (points) => points.filter((point) => isPresent(point.date_from, point.date_to)),
-  [FilterType.PAST]: (points) => points.filter((point) => isFromPast(point.date_to)),
+  [FilterType.FUTURE]: (points) => points.filter((point) => isFromFuture(point.dateFrom)),
+  [FilterType.PRESENT]: (points) => points.filter((point) => isPresent(point.dateFrom, point.dateTo)),
+  [FilterType.PAST]: (points) => points.filter((point) => isFromPast(point.dateTo)),
 };
 
 export {filter};
