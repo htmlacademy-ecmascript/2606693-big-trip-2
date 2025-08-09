@@ -14,7 +14,6 @@ const BLANK_POINT = {
   isFavorite: false,
   offers: [],
   type: DefaultPoint.TYPE,
-  id: crypto.randomUUID()
 };
 
 const UNVALID_BASE_PRICE_PATTERN = /\D+/;
@@ -75,12 +74,19 @@ const UpdateType = {
 const Method = {
   GET: 'GET',
   PUT: 'PUT',
+  POST: 'POST',
+  DELETE: 'DELETE',
 };
 
 const Url = {
   POINTS: 'points',
   OFFERS: 'offers',
   DESTINATIONS: 'destinations'
+};
+
+const TimeLimit = {
+  LOWER_LIMIT: 350,
+  UPPER_LIMIT: 1000,
 };
 
 export {
@@ -96,5 +102,6 @@ export {
   BLANK_POINT,
   UNVALID_BASE_PRICE_PATTERN,
   Method,
-  Url
+  Url,
+  TimeLimit
 };

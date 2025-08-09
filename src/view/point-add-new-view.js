@@ -6,10 +6,18 @@ import he from 'he';
 
 import 'flatpickr/dist/flatpickr.min.css';
 
-function createEventTypeTemplate (pointTypes, selectedType) {
+function createEventTypeTemplate (pointTypes, selectedType, isDisabled) {
   return pointTypes.map((type, i) => (
     `<div class="event__type-item">
-      <input id="event-type-${type}-${i}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type}" ${type === selectedType ? 'checked' : ''}>
+      <input
+        id="event-type-${type}-${i}"
+        class="event__type-input  visually-hidden"
+        type="radio"
+        name="event-type"
+        value="${type}"
+        ${type === selectedType ? 'checked' : ''}
+        ${isDisabled ? 'disabled' : ''}
+      >
       <label class="event__type-label  event__type-label--${type}" for="event-type-${type}-${i}">
         ${type}
       </label>
@@ -17,13 +25,13 @@ function createEventTypeTemplate (pointTypes, selectedType) {
   )).join('');
 }
 
-function createDestinationsTemplate (allDestinations) {
+function createDestinationsTemplate (allDestinations, isDisabled) {
   return allDestinations.map(({name, id}) => (
-    `<option value="${name}" id=${id}></option>`
+    `<option value="${name}" id=${id} ${isDisabled ? 'disabled' : ''}></option>`
   )).join('');
 }
 
-function createOffersTemplate (availableOffers, selectedOffers) {
+function createOffersTemplate (availableOffers, selectedOffers, isDisabled) {
   if (availableOffers.length === 0) {
     return '';
   }
@@ -32,7 +40,14 @@ function createOffersTemplate (availableOffers, selectedOffers) {
     const isChecked = selectedOffers.some((offer) => offer.id === id);
     return (
       `<div class="event__offer-selector">
-        <input class="event__offer-checkbox  visually-hidden" id="${id}" type="checkbox" name="event-offer-${id}" ${isChecked ? 'checked' : ''}>
+        <input
+          class="event__offer-checkbox  visually-hidden"
+          id="${id}"
+          type="checkbox"
+          name="event-offer-${id}"
+          ${isChecked ? 'checked' : ''}
+          ${isDisabled ? 'disabled' : ''}
+        >
         <label class="event__offer-label" for="${id}">
           <span class="event__offer-title">${title}</span>
           &plus;&euro;&nbsp;
@@ -78,7 +93,7 @@ function createDescriptionTemplate ({description, pictures}) {
   );
 }
 
-function createTemplate({point, extraData}) {
+function createTemplate({point, extraData, isDisabled, isSaving, isDeleting}) {
   const {basePrice, dateFrom, dateTo, type, id} = point;
   const {allDestinations, destination, pointTypes, availableOffers, selectedOffers} = extraData;
   const {name: destinationName} = destination;
@@ -86,9 +101,9 @@ function createTemplate({point, extraData}) {
   const humanDateTimeFrom = humanizeDateTime(dateFrom);
   const humanDateTimeTo = humanizeDateTime(dateTo);
 
-  const eventTypeTemplate = createEventTypeTemplate(pointTypes, type);
-  const destinationsTemplate = createDestinationsTemplate(allDestinations);
-  const offersTemplate = createOffersTemplate(availableOffers, selectedOffers);
+  const eventTypeTemplate = createEventTypeTemplate(pointTypes, type, isDisabled);
+  const destinationsTemplate = createDestinationsTemplate(allDestinations, isDisabled);
+  const offersTemplate = createOffersTemplate(availableOffers, selectedOffers, isDisabled);
   const descriptionTemplate = createDescriptionTemplate(destination);
 
   return (
@@ -99,8 +114,12 @@ function createTemplate({point, extraData}) {
             <span class="visually-hidden">Choose event type</span>
             <img class="event__type-icon" width="17" height="17" src="img/icons/${type}.png" alt="Event type icon">
           </label>
-          <input class="event__type-toggle  visually-hidden" id="event-type-toggle-${id}" type="checkbox">
-
+          <input
+            class="event__type-toggle visually-hidden"
+            id="event-type-toggle-${id}"
+            type="checkbox"
+            ${isDisabled ? 'disabled' : ''}
+          >
           <div class="event__type-list">
             <fieldset class="event__type-group">
               <legend class="visually-hidden">Event type</legend>
@@ -121,6 +140,7 @@ function createTemplate({point, extraData}) {
             value="${he.encode(destinationName ?? '')}"
             list="destination-list-${id}"
             required
+            ${isDisabled ? 'disabled' : ''}
           >
           <datalist id="destination-list-${id}">
             ${destinationsTemplate}
@@ -129,21 +149,43 @@ function createTemplate({point, extraData}) {
 
         <div class="event__field-group  event__field-group--time">
           <label class="visually-hidden" for="event-start-time-${id}">From</label>
-          <input class="event__input  event__input--time" id="event-start-time-${id}" type="text" name="event-start-time" value="${humanDateTimeFrom}">
+          <input
+            class="event__input  event__input--time"
+            id="event-start-time-${id}"
+            type="text"
+            name="event-start-time"
+            value="${humanDateTimeFrom}"
+            ${isDisabled ? 'disabled' : ''}
+          >
           &mdash;
           <label class="visually-hidden" for="event-end-time-${id}">To</label>
-          <input class="event__input  event__input--time" id="event-end-time-${id}" type="text" name="event-end-time" value="${humanDateTimeTo}">
+          <input
+            class="event__input  event__input--time"
+            id="event-end-time-${id}"
+            type="text"
+            name="event-end-time"
+            value="${humanDateTimeTo}"
+            ${isDisabled ? 'disabled' : ''}
+          >
         </div>
 
         <div class="event__field-group  event__field-group--price">
           <label class="event__label" for="event-price-${id}">
             <span class="visually-hidden">Price</span>&euro;
           </label>
-          <input class="event__input  event__input--price" id="event-price-${id}" type="number" step="1" name="event-price" value="${he.encode(basePrice.toString())}" required>
+          <input
+            class="event__input  event__input--price"
+            id="event-price-${id}"
+            type="number" step="1"
+            name="event-price"
+            value="${he.encode(basePrice.toString())}"
+            required
+            ${isDisabled ? 'disabled' : ''}
+          >
         </div>
 
-        <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-        <button class="event__reset-btn" type="reset">Delete</button>
+        <button class="event__save-btn  btn  btn--blue" type="submit" ${isDisabled ? 'disabled' : ''}>${isSaving ? 'Saving...' : 'Save'}</button>
+        <button class="event__reset-btn" type="reset" ${isDisabled ? 'disabled' : ''}>${isDeleting ? 'Deleting...' : 'Delete'}</button>
       </header>
       <section class="event__details">
         ${offersTemplate}
@@ -354,11 +396,22 @@ class PointAddNewView extends AbstractStatefulView {
   };
 
   static parsePointToState(properties) {
-    return {...properties};
+    return {
+      ...properties,
+      isDisabled: false,
+      isSaving: false,
+      isDeleting: false,
+    };
   }
 
   static parseStateToPoint(state) {
-    return {...state};
+    const newState = {...state};
+
+    delete newState.isDisabled;
+    delete newState.isSaving;
+    delete newState.isDeleting;
+
+    return newState;
   }
 }
 
