@@ -60,6 +60,18 @@ class NewPointPresenter {
     });
   }
 
+  setAborting() {
+    const resetFormState = () => {
+      this.#pointEditComponent.updateElement({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false,
+      });
+    };
+
+    this.#pointEditComponent.shake(resetFormState);
+  }
+
   #handleFormSubmit = (update) => {
     this.#handleDataChange(
       UserAction.ADD_POINT,
