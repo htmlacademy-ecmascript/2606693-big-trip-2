@@ -84,6 +84,11 @@ const Url = {
   DESTINATIONS: 'destinations'
 };
 
+const TimeLimit = {
+  LOWER_LIMIT: 350,
+  UPPER_LIMIT: 1000,
+};
+
 export {
   DateFormat,
   BasePrice,
@@ -97,5 +102,6 @@ export {
   BLANK_POINT,
   UNVALID_BASE_PRICE_PATTERN,
   Method,
-  Url
+  Url,
+  TimeLimit
 };
