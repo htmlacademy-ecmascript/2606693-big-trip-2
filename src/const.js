@@ -14,7 +14,6 @@ const BLANK_POINT = {
   isFavorite: false,
   offers: [],
   type: DefaultPoint.TYPE,
-  id: crypto.randomUUID()
 };
 
 const UNVALID_BASE_PRICE_PATTERN = /\D+/;
@@ -75,6 +74,8 @@ const UpdateType = {
 const Method = {
   GET: 'GET',
   PUT: 'PUT',
+  POST: 'POST',
+  DELETE: 'DELETE',
 };
 
 const Url = {
