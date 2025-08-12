@@ -1,14 +1,23 @@
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
-import { DateFormat, BasePrice } from '../const.js';
+import { DateFormat, DateUnit } from '../const.js';
 
 dayjs.extend(duration);
+
+const isDatesEqual = (dateA, dateB, unit = DateUnit.DAY) => (dateA === null && dateB === null) || dayjs(dateA).isSame(dateB, unit);
 
 const humanizeDateTime = (date) => dayjs(date).format(DateFormat.DAY_MONTH_YEAR_HOUR_MINUTE);
 
 const humanizeDate = (date) => dayjs(date).format(DateFormat.MONTH_DAY);
 
 const humanizeTime = (date) => dayjs(date).format(DateFormat.HOUR_MINUTE);
+
+const humanizeTripInfoDates = ([dateA, dateB]) => {
+  if (isDatesEqual(dateA, dateB, DateUnit.MONTH)) {
+    return [dayjs(dateA).format(DateFormat.DAY), dayjs(dateB).format(DateFormat.DAY_MONTH)];
+  }
+  return [dayjs(dateA).format(DateFormat.DAY_MONTH), dayjs(dateB).format(DateFormat.DAY_MONTH)];
+};
 
 const getTimeDifference = (dateFrom, dateTo) => {
   const date1 = dayjs(dateFrom);
@@ -24,12 +33,6 @@ const getTimeDifference = (dateFrom, dateTo) => {
   return durationData.format(DateFormat.DURATION_DAY_HOUR_MINUTE);
 };
 
-const getBasePrice = (a = BasePrice.MIN, b = BasePrice.MAX) => {
-  const from = Math.ceil(Math.min(a, b));
-  const to = Math.floor(Math.max(a, b));
-  return Math.floor(Math.random() * (to - from + 1)) + from;
-};
-
 const sortPointsByPrice = (pointA, pointB) => pointB.basePrice - pointA.basePrice;
 
 const sortPointsByTime = (pointA, pointB) => {
@@ -41,6 +44,19 @@ const sortPointsByTime = (pointA, pointB) => {
 
 const sortPointsByStartDate = (pointA, pointB) => dayjs(pointA.dateFrom).diff(dayjs(pointB.dateFrom));
 
-const isDatesEqual = (dateA, dateB) => (dateA === null && dateB === null) || dayjs(dateA).isSame(dateB, 'D');
+const sortPointsByEndDate = (pointA, pointB) => dayjs(pointB.dateTo).diff(dayjs(pointA.dateTo));
 
-export { humanizeDate, humanizeTime, humanizeDateTime, getTimeDifference, getBasePrice, sortPointsByStartDate, sortPointsByTime, sortPointsByPrice, isDatesEqual };
+
+export {
+  humanizeDate,
+  humanizeTime,
+  humanizeDateTime,
+  getTimeDifference,
+  sortPointsByStartDate,
+  sortPointsByEndDate,
+  sortPointsByTime,
+  sortPointsByPrice,
+  isDatesEqual,
+  humanizeTripInfoDates
+};
+
