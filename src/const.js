@@ -96,6 +96,15 @@ const TimeLimit = {
   UPPER_LIMIT: 1000,
 };
 
+const TripInfo = {
+  START: 0,
+  END: -1,
+  MAX_NAMES_COUNT: 3,
+  SEPARATOR_DATE: '&nbsp;&mdash;&nbsp;',
+  SEPARATOR_TITLE: ' &mdash; ',
+  SEPARATOR_TITLE_MAX: ' &mdash;...&mdash; ',
+};
+
 export {
   DateFormat,
   BasePrice,
@@ -111,5 +120,6 @@ export {
   Method,
   Url,
   TimeLimit,
-  DateUnit
+  DateUnit,
+  TripInfo
 };
