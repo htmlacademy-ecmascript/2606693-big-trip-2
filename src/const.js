@@ -32,7 +32,6 @@ const DateFormat = {
 
 const DateUnit = {
   DAY: 'day',
-  MONTH: 'month'
 };
 
 const BasePrice = {

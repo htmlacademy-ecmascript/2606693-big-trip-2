@@ -12,12 +12,7 @@ const humanizeDate = (date) => dayjs(date).format(DateFormat.MONTH_DAY);
 
 const humanizeTime = (date) => dayjs(date).format(DateFormat.HOUR_MINUTE);
 
-const humanizeTripInfoDates = ([dateA, dateB]) => {
-  if (isDatesEqual(dateA, dateB, DateUnit.MONTH)) {
-    return [dayjs(dateA).format(DateFormat.DAY), dayjs(dateB).format(DateFormat.DAY_MONTH)];
-  }
-  return [dayjs(dateA).format(DateFormat.DAY_MONTH), dayjs(dateB).format(DateFormat.DAY_MONTH)];
-};
+const humanizeTripInfoDates = (dates) => dates.map((date) => dayjs(date).format(DateFormat.DAY_MONTH));
 
 const getTimeDifference = (dateFrom, dateTo) => {
   const date1 = dayjs(dateFrom);

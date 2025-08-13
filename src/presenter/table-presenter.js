@@ -224,12 +224,13 @@ class TablePresenter {
       return;
     }
 
+    render(this.#pointsListComponent, this.#tableContainer);
+
     if (this.points.length === 0) {
       this.#renderNoPoints();
       return;
     }
 
-    render(this.#pointsListComponent, this.#tableContainer);
 
     this.#renderSort();
     this.#renderPoints();
