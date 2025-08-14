@@ -19,13 +19,20 @@ const getTimeDifference = (dateFrom, dateTo) => {
   const date2 = dayjs(dateTo);
   const datesDifference = date2.diff(date1);
   const durationData = dayjs.duration(datesDifference);
+
   if (durationData.asHours() < 1) {
     return durationData.format(DateFormat.DURATION_MINUTE);
   }
+
+  const hoursMinutesTime = durationData.format(DateFormat.DURATION_HOUR_MINUTE);
+
   if (durationData.asDays() < 1) {
-    return durationData.format(DateFormat.DURATION_HOUR_MINUTE);
+    return hoursMinutesTime;
   }
-  return durationData.format(DateFormat.DURATION_DAY_HOUR_MINUTE);
+
+  const fullDaysTime = `${Math.trunc(durationData.asDays()).toString().padStart(DateFormat.PAD_LENGTH, DateFormat.PAD_SYMBOL) }D`;
+
+  return `${fullDaysTime} ${hoursMinutesTime}`;
 };
 
 const sortPointsByPrice = (pointA, pointB) => pointB.basePrice - pointA.basePrice;
@@ -43,15 +50,6 @@ const sortPointsByEndDate = (pointA, pointB) => dayjs(pointB.dateTo).diff(dayjs(
 
 
 export {
-  humanizeDate,
-  humanizeTime,
-  humanizeDateTime,
-  getTimeDifference,
-  sortPointsByStartDate,
-  sortPointsByEndDate,
-  sortPointsByTime,
-  sortPointsByPrice,
-  isDatesEqual,
-  humanizeTripInfoDates
+  getTimeDifference, humanizeDate, humanizeDateTime, humanizeTime, humanizeTripInfoDates, isDatesEqual, sortPointsByEndDate, sortPointsByPrice, sortPointsByStartDate, sortPointsByTime
 };
 

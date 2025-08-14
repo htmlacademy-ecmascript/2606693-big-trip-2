@@ -26,8 +26,9 @@ const DateFormat = {
   DAY_MONTH_YEAR_HOUR_MINUTE: 'DD/MM/YY HH:mm',
   DURATION_MINUTE: 'mm[M]',
   DURATION_HOUR_MINUTE: 'HH[H] mm[M]',
-  DURATION_DAY_HOUR_MINUTE: 'DD[D] HH[H] mm[M]',
-  FLATPICKR_OUTPUT: 'd/m/y H:i'
+  FLATPICKR_OUTPUT: 'd/m/y H:i',
+  PAD_SYMBOL: '0',
+  PAD_LENGTH: 2
 };
 
 const DateUnit = {
