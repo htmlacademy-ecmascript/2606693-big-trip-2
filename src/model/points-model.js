@@ -33,13 +33,13 @@ class PointsModel extends Observable {
       this.#points = points.map(this.#adaptToClient);
       this.#offers = offers;
       this.#destinations = destinations;
+      this._notify(UpdateType.INIT);
     } catch (err) {
       this.#points = [];
       this.#offers = [];
       this.#destinations = [];
+      this._notify(UpdateType.ERROR);
     }
-
-    this._notify(UpdateType.INIT);
   }
 
   async updatePoint(updateType, update) {

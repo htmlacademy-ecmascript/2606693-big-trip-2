@@ -3,6 +3,7 @@ import ListSortView from '../view/list-sort-view.js';
 import PointsListView from '../view/points-list-view.js';
 import NoPointsView from '../view/no-points-view.js';
 import LoadingView from '../view/loading-view.js';
+import ErrorLoadingView from '../view/error-loading-view.js';
 import PointPresenter from './point-presenter.js';
 import { SortType, UpdateType, UserAction, FilterType, BLANK_POINT, TimeLimit } from '../const.js';
 import { sortPointsByPrice, sortPointsByStartDate, sortPointsByTime } from '../utils/point.js';
@@ -17,6 +18,7 @@ class TablePresenter {
 
   #pointsListComponent = new PointsListView();
   #loadingComponent = new LoadingView();
+  #errorLoadingComponent = new ErrorLoadingView();
   #sortComponent = null;
   #noPointsComponent = null;
 
@@ -132,6 +134,11 @@ class TablePresenter {
         remove(this.#loadingComponent);
         this.#renderTable();
         break;
+      case UpdateType.ERROR:
+        this.#isLoading = false;
+        remove(this.#loadingComponent);
+        render(this.#errorLoadingComponent, this.#tableContainer, RenderPosition.BEFOREEND);
+        break;
     }
   };
 
@@ -212,6 +219,8 @@ class TablePresenter {
   }
 
   #renderTable() {
+    render(this.#pointsListComponent, this.#tableContainer);
+
     if (this.#isLoading) {
       this.#renderLoading();
       return;
@@ -221,8 +230,6 @@ class TablePresenter {
       this.#renderNoPoints();
       return;
     }
-
-    render(this.#pointsListComponent, this.#tableContainer);
 
     this.#renderSort();
     this.#renderPoints();

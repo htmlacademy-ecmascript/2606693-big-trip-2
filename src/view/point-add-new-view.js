@@ -32,10 +32,6 @@ function createDestinationsTemplate (allDestinations, isDisabled) {
 }
 
 function createOffersTemplate (availableOffers, selectedOffers, isDisabled) {
-  if (availableOffers.length === 0) {
-    return '';
-  }
-
   const offersListTemplate = availableOffers.map(({id, title, price}) => {
     const isChecked = selectedOffers.some((offer) => offer.id === id);
     return (
@@ -57,44 +53,41 @@ function createOffersTemplate (availableOffers, selectedOffers, isDisabled) {
     );
   }).join('');
 
-  return (
-    `<section class="event__section  event__section--offers">
+  return availableOffers.length > 0 ? `
+    <section class="event__section  event__section--offers">
       <h3 class="event__section-title  event__section-title--offers">Offers</h3>
       <div class="event__available-offers">
         ${offersListTemplate}
       </div>
-    </section>`
-  );
+    </section>` : '';
 }
 
 function createDescriptionTemplate ({description, pictures}) {
-  if(!description) {
-    return '';
-  }
+  const hasDescription = !!description;
+  const hasPictures = pictures && pictures.length;
+  const hasEventDetails = hasDescription || hasPictures;
 
-  const picturesListTemplate = pictures.map((picture) => (
+  const picturesListTemplate = hasPictures ? pictures.map((picture) => (
     `<img class="event__photo" src="${picture.src}" alt="${picture.description}">`
-  )).join('');
+  )).join('') : '';
 
-  return (
-    `<section class="event__section  event__section--destination">
+  return hasEventDetails ? `
+    <section class="event__section  event__section--destination">
       <h3 class="event__section-title  event__section-title--destination">
         Destination
       </h3>
-      <p class="event__destination-description">
-        ${description}
-      </p>
-      <div class="event__photos-container">
-        <div class="event__photos-tape">
-          ${picturesListTemplate}
-        </div>
-      </div>
-    </section>`
-  );
+      ${hasDescription ? `<p class="event__destination-description">${description}</p>` : ''}
+      ${hasPictures ? `
+        <div class="event__photos-container">
+          <div class="event__photos-tape">
+            ${picturesListTemplate}
+          </div>
+        </div>` : ''}
+    </section>` : '';
 }
 
 function createTemplate({point, extraData, isDisabled, isSaving, isDeleting}) {
-  const {basePrice, dateFrom, dateTo, type, id} = point;
+  const {basePrice, dateFrom, dateTo, type} = point;
   const {allDestinations, destination, pointTypes, availableOffers, selectedOffers} = extraData;
   const {name: destinationName} = destination;
 
@@ -107,91 +100,93 @@ function createTemplate({point, extraData, isDisabled, isSaving, isDeleting}) {
   const descriptionTemplate = createDescriptionTemplate(destination);
 
   return (
-    `<form class="event event--edit" action="#" method="post">
-      <header class="event__header">
-        <div class="event__type-wrapper">
-          <label class="event__type  event__type-btn" for="event-type-toggle-${id}">
-            <span class="visually-hidden">Choose event type</span>
-            <img class="event__type-icon" width="17" height="17" src="img/icons/${type}.png" alt="Event type icon">
-          </label>
-          <input
-            class="event__type-toggle visually-hidden"
-            id="event-type-toggle-${id}"
-            type="checkbox"
-            ${isDisabled ? 'disabled' : ''}
-          >
-          <div class="event__type-list">
-            <fieldset class="event__type-group">
-              <legend class="visually-hidden">Event type</legend>
-              ${eventTypeTemplate}
-            </fieldset>
+    `<li class="trip-events__item">
+      <form class="event event--edit" action="#" method="post">
+        <header class="event__header">
+          <div class="event__type-wrapper">
+            <label class="event__type  event__type-btn" for="event-type-toggle">
+              <span class="visually-hidden">Choose event type</span>
+              <img class="event__type-icon" width="17" height="17" src="img/icons/${type}.png" alt="Event type icon">
+            </label>
+            <input
+              class="event__type-toggle visually-hidden"
+              id="event-type-toggle"
+              type="checkbox"
+              ${isDisabled ? 'disabled' : ''}
+            >
+            <div class="event__type-list">
+              <fieldset class="event__type-group">
+                <legend class="visually-hidden">Event type</legend>
+                ${eventTypeTemplate}
+              </fieldset>
+            </div>
           </div>
-        </div>
 
-        <div class="event__field-group  event__field-group--destination">
-          <label class="event__label  event__type-output" for="event-destination-${id}">
-            ${type}
-          </label>
-          <input
-            class="event__input event__input--destination"
-            id="event-destination-${id}"
-            type="text"
-            name="event-destination"
-            value="${he.encode(destinationName ?? '')}"
-            list="destination-list-${id}"
-            required
-            ${isDisabled ? 'disabled' : ''}
-          >
-          <datalist id="destination-list-${id}">
-            ${destinationsTemplate}
-          </datalist>
-        </div>
+          <div class="event__field-group  event__field-group--destination">
+            <label class="event__label  event__type-output" for="event-destination">
+              ${type}
+            </label>
+            <input
+              class="event__input event__input--destination"
+              id="event-destination"
+              type="text"
+              name="event-destination"
+              value="${he.encode(destinationName ?? '')}"
+              list="destination-list"
+              required
+              ${isDisabled ? 'disabled' : ''}
+            >
+            <datalist id="destination-list">
+              ${destinationsTemplate}
+            </datalist>
+          </div>
 
-        <div class="event__field-group  event__field-group--time">
-          <label class="visually-hidden" for="event-start-time-${id}">From</label>
-          <input
-            class="event__input  event__input--time"
-            id="event-start-time-${id}"
-            type="text"
-            name="event-start-time"
-            value="${humanDateTimeFrom}"
-            ${isDisabled ? 'disabled' : ''}
-          >
-          &mdash;
-          <label class="visually-hidden" for="event-end-time-${id}">To</label>
-          <input
-            class="event__input  event__input--time"
-            id="event-end-time-${id}"
-            type="text"
-            name="event-end-time"
-            value="${humanDateTimeTo}"
-            ${isDisabled ? 'disabled' : ''}
-          >
-        </div>
+          <div class="event__field-group  event__field-group--time">
+            <label class="visually-hidden" for="event-start-time">From</label>
+            <input
+              class="event__input  event__input--time"
+              id="event-start-time"
+              type="text"
+              name="event-start-time"
+              value="${humanDateTimeFrom}"
+              ${isDisabled ? 'disabled' : ''}
+            >
+            &mdash;
+            <label class="visually-hidden" for="event-end-time">To</label>
+            <input
+              class="event__input  event__input--time"
+              id="event-end-time"
+              type="text"
+              name="event-end-time"
+              value="${humanDateTimeTo}"
+              ${isDisabled ? 'disabled' : ''}
+            >
+          </div>
 
-        <div class="event__field-group  event__field-group--price">
-          <label class="event__label" for="event-price-${id}">
-            <span class="visually-hidden">Price</span>&euro;
-          </label>
-          <input
-            class="event__input  event__input--price"
-            id="event-price-${id}"
-            type="number" step="1"
-            name="event-price"
-            value="${he.encode(basePrice.toString())}"
-            required
-            ${isDisabled ? 'disabled' : ''}
-          >
-        </div>
+          <div class="event__field-group  event__field-group--price">
+            <label class="event__label" for="event-price">
+              <span class="visually-hidden">Price</span>&euro;
+            </label>
+            <input
+              class="event__input  event__input--price"
+              id="event-price"
+              type="number" step="1"
+              name="event-price"
+              value="${he.encode(basePrice.toString())}"
+              required
+              ${isDisabled ? 'disabled' : ''}
+            >
+          </div>
 
-        <button class="event__save-btn  btn  btn--blue" type="submit" ${isDisabled ? 'disabled' : ''}>${isSaving ? 'Saving...' : 'Save'}</button>
-        <button class="event__reset-btn" type="reset" ${isDisabled ? 'disabled' : ''}>${isDeleting ? 'Deleting...' : 'Delete'}</button>
-      </header>
-      <section class="event__details">
-        ${offersTemplate}
-        ${descriptionTemplate}
-      </section>
-    </form>`
+          <button class="event__save-btn  btn  btn--blue" type="submit" ${isDisabled ? 'disabled' : ''}>${isSaving ? 'Saving...' : 'Save'}</button>
+          <button class="event__reset-btn" type="reset">${isDeleting ? 'Canceling...' : 'Cancel'}</button>
+        </header>
+        <section class="event__details">
+          ${offersTemplate}
+          ${descriptionTemplate}
+        </section>
+      </form>
+    </li>`
   );
 }
 
@@ -363,7 +358,7 @@ class PointAddNewView extends AbstractStatefulView {
   #setDatepickerFrom() {
     const config = {
       defaultDate: this._state.point.dateFrom,
-      maxDate: new Date(new Date(this._state.point.dateTo).getTime() - GAP_IN_MILLISECONDS).toISOString(),
+      maxDate: this._state.point.dateFrom ? new Date(new Date(this._state.point.dateTo).getTime() - GAP_IN_MILLISECONDS).toISOString() : null,
       enableTime: true,
       'time_24hr': true,
       dateFormat: DateFormat.FLATPICKR_OUTPUT,
@@ -378,7 +373,7 @@ class PointAddNewView extends AbstractStatefulView {
   #setDatepickerTo() {
     const config = {
       defaultDate: this._state.point.dateTo,
-      minDate: new Date(new Date(this._state.point.dateFrom).getTime() + GAP_IN_MILLISECONDS).toISOString(),
+      minDate: this._state.point.dateFrom ? new Date(new Date(this._state.point.dateFrom).getTime() + GAP_IN_MILLISECONDS).toISOString() : null,
       enableTime: true,
       'time_24hr': true,
       dateFormat: DateFormat.FLATPICKR_OUTPUT,

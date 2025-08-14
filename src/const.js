@@ -1,13 +1,13 @@
 const GAP_IN_MILLISECONDS = 3_600_000;
 
 const DefaultPoint = {
-  DATE_FROM: new Date().toISOString(),
-  DATE_TO: new Date((new Date().getTime() + GAP_IN_MILLISECONDS)).toISOString(),
-  TYPE: 'bus',
+  DATE_FROM: null,
+  DATE_TO: null,
+  TYPE: 'flight',
 };
 
 const BLANK_POINT = {
-  basePrice: '',
+  basePrice: 0,
   dateFrom: DefaultPoint.DATE_FROM,
   dateTo: DefaultPoint.DATE_TO,
   destination: '',
@@ -19,13 +19,20 @@ const BLANK_POINT = {
 const UNVALID_BASE_PRICE_PATTERN = /\D+/;
 
 const DateFormat = {
+  DAY: 'D',
+  DAY_MONTH: 'D MMM',
   MONTH_DAY:'MMM D',
   HOUR_MINUTE: 'HH:mm',
   DAY_MONTH_YEAR_HOUR_MINUTE: 'DD/MM/YY HH:mm',
   DURATION_MINUTE: 'mm[M]',
   DURATION_HOUR_MINUTE: 'HH[H] mm[M]',
-  DURATION_DAY_HOUR_MINUTE: 'DD[D] HH[H] mm[M]',
-  FLATPICKR_OUTPUT: 'd/m/y H:i'
+  FLATPICKR_OUTPUT: 'd/m/y H:i',
+  PAD_SYMBOL: '0',
+  PAD_LENGTH: 2
+};
+
+const DateUnit = {
+  DAY: 'day',
 };
 
 const BasePrice = {
@@ -69,6 +76,7 @@ const UpdateType = {
   MINOR: 'MINOR',
   MAJOR: 'MAJOR',
   INIT: 'INIT',
+  ERROR: 'ERROR',
 };
 
 const Method = {
@@ -89,6 +97,15 @@ const TimeLimit = {
   UPPER_LIMIT: 1000,
 };
 
+const TripInfo = {
+  START: 0,
+  END: -1,
+  MAX_NAMES_COUNT: 3,
+  SEPARATOR_DATE: '&nbsp;&mdash;&nbsp;',
+  SEPARATOR_TITLE: ' &mdash; ',
+  SEPARATOR_TITLE_MAX: ' &mdash;...&mdash; ',
+};
+
 export {
   DateFormat,
   BasePrice,
@@ -103,5 +120,7 @@ export {
   UNVALID_BASE_PRICE_PATTERN,
   Method,
   Url,
-  TimeLimit
+  TimeLimit,
+  DateUnit,
+  TripInfo,
 };
