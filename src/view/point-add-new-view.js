@@ -179,7 +179,7 @@ function createTemplate({point, extraData, isDisabled, isSaving, isDeleting}) {
           </div>
 
           <button class="event__save-btn  btn  btn--blue" type="submit" ${isDisabled ? 'disabled' : ''}>${isSaving ? 'Saving...' : 'Save'}</button>
-          <button class="event__reset-btn" type="reset">${isDeleting ? 'Deleting...' : 'Delete'}</button>
+          <button class="event__reset-btn" type="reset">${isDeleting ? 'Canceling...' : 'Cancel'}</button>
         </header>
         <section class="event__details">
           ${offersTemplate}
@@ -358,7 +358,7 @@ class PointAddNewView extends AbstractStatefulView {
   #setDatepickerFrom() {
     const config = {
       defaultDate: this._state.point.dateFrom,
-      maxDate: new Date(new Date(this._state.point.dateTo).getTime() - GAP_IN_MILLISECONDS).toISOString(),
+      maxDate: this._state.point.dateFrom ? new Date(new Date(this._state.point.dateTo).getTime() - GAP_IN_MILLISECONDS).toISOString() : null,
       enableTime: true,
       'time_24hr': true,
       dateFormat: DateFormat.FLATPICKR_OUTPUT,
@@ -373,7 +373,7 @@ class PointAddNewView extends AbstractStatefulView {
   #setDatepickerTo() {
     const config = {
       defaultDate: this._state.point.dateTo,
-      minDate: new Date(new Date(this._state.point.dateFrom).getTime() + GAP_IN_MILLISECONDS).toISOString(),
+      minDate: this._state.point.dateFrom ? new Date(new Date(this._state.point.dateFrom).getTime() + GAP_IN_MILLISECONDS).toISOString() : null,
       enableTime: true,
       'time_24hr': true,
       dateFormat: DateFormat.FLATPICKR_OUTPUT,

@@ -1,13 +1,13 @@
 const GAP_IN_MILLISECONDS = 3_600_000;
 
 const DefaultPoint = {
-  DATE_FROM: new Date().toISOString(),
-  DATE_TO: new Date((new Date().getTime() + GAP_IN_MILLISECONDS)).toISOString(),
-  TYPE: 'bus',
+  DATE_FROM: null,
+  DATE_TO: null,
+  TYPE: 'flight',
 };
 
 const BLANK_POINT = {
-  basePrice: '',
+  basePrice: 0,
   dateFrom: DefaultPoint.DATE_FROM,
   dateTo: DefaultPoint.DATE_TO,
   destination: '',
@@ -121,5 +121,5 @@ export {
   Url,
   TimeLimit,
   DateUnit,
-  TripInfo
+  TripInfo,
 };

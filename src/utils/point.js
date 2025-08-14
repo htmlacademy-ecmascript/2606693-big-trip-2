@@ -6,7 +6,7 @@ dayjs.extend(duration);
 
 const isDatesEqual = (dateA, dateB, unit = DateUnit.DAY) => (dateA === null && dateB === null) || dayjs(dateA).isSame(dateB, unit);
 
-const humanizeDateTime = (date) => dayjs(date).format(DateFormat.DAY_MONTH_YEAR_HOUR_MINUTE);
+const humanizeDateTime = (date) => date ? dayjs(date).format(DateFormat.DAY_MONTH_YEAR_HOUR_MINUTE) : '';
 
 const humanizeDate = (date) => dayjs(date).format(DateFormat.MONTH_DAY);
 

@@ -219,18 +219,17 @@ class TablePresenter {
   }
 
   #renderTable() {
+    render(this.#pointsListComponent, this.#tableContainer);
+
     if (this.#isLoading) {
       this.#renderLoading();
       return;
     }
 
-    render(this.#pointsListComponent, this.#tableContainer);
-
     if (this.points.length === 0) {
       this.#renderNoPoints();
       return;
     }
-
 
     this.#renderSort();
     this.#renderPoints();
